@@ -25,8 +25,8 @@ const Navbar = () => {
                         }
 
                         <div className='flex gap-5'>
-                            <Link className='font-medium btn btn-sm btn-primary'>Sign In</Link>
-                            <Link className='font-medium btn btn-sm btn-primary'>Sign Up</Link>
+                            <Link to='login' className='font-medium btn btn-sm btn-primary'>Login</Link>
+                            <Link to='register' className='font-medium btn btn-sm btn-primary'>Sign Up</Link>
                         </div>
                     </ul>
                 </div>
@@ -72,8 +72,8 @@ const Navbar = () => {
                 </div>
 
                 <div className=' md:flex md:flex-row gap-4 hidden '>
-                    <Link className='font-medium btn btn-primary'>Sign In</Link>
-                    <Link className='font-medium btn btn-primary'>Sign Up</Link>
+                    <Link to='login' className='font-medium btn btn-primary'>Login</Link>
+                    <Link to='register' className='font-medium btn btn-primary'>Sign Up</Link>
                 </div>
             </div>
         </div>

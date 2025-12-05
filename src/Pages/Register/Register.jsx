@@ -1,0 +1,62 @@
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { Link } from 'react-router';
+import GoogleLogin from '../../Components/SocialLogin/GoogleLogin';
+
+const Register = () => {
+
+       const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm();
+
+    const handleRegister = (data) => {
+        console.log(data)
+    }
+
+    return (
+        <div className='flex flex-col justify-center items-center min-h-screen'>
+            <div className='space-y-2 pb-5 text-center'>
+                <h2 className='text-4xl font-bold text-secondary text-start'> Create an Account </h2>
+                <p className='text-secondary'>Register with ContestHub</p>
+            </div>
+            <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+                <div className="card-body">
+                    <form onSubmit={handleSubmit(handleRegister)}>
+                        <fieldset className="fieldset">
+
+                            {/* Name field */}
+                            <label className="label">Name</label>
+                            <input border-secondary type="text" {...register('name')} className="input border-secondary" placeholder="Name" />
+
+
+
+                            {/* image field */}
+                            <label className="label">Name</label>
+                            <input border-secondary type='file' {...register('image')} className="file-input border-secondary" placeholder="Your Photo" />
+
+
+                            {/* Email Field */}
+                            <label className="label">Email</label>
+                            <input border-secondary type="email" {...register('email')} className="input border-secondary" placeholder="Email" />
+
+
+                            <label className="label">Password</label>
+                            <input border-secondary type="password" {...register('password')} className="input border-secondary" placeholder="Password" />
+
+                            <div><a className="link link-hover">Forgot password?</a></div>
+                            <button className="btn btn-primary mt-4">Register</button>
+
+                        </fieldset>
+                    </form>
+                    <GoogleLogin/>
+                    <p>Already have an Account? <Link to='/login' className='font-bold text-secondary'>Login</Link></p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Register;
