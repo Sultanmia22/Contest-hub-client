@@ -1,14 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GoTrophy } from 'react-icons/go';
 import { Link, NavLink } from 'react-router';
 import useAuth from '../../Hook/useAuth';
+import { useEffect } from 'react';
 
 const Navbar = () => {
 
     const { user, userSignOut } = useAuth()
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light')
 
     const handleSignOut = async () => {
         const result = await userSignOut()
+    }
+
+    // Theme section 
+
+    useEffect(() => {
+        const html = document.querySelector("html");
+        html.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+    }, [theme]);
+
+    const handleTheme = (checked) => {
+        setTheme(checked ? 'dark' : 'light')
     }
 
     const links = <>
@@ -42,7 +56,7 @@ const Navbar = () => {
                 <a className=" text-xl">
                     <div className='flex items-center gap-2'>
                         <GoTrophy size={24} className='text-primary font-bold' />
-                        <h2 className='text-xl md:2xl font-semibold md:font-bold text-primary'>ContestHub</h2>
+                        <h2 className='text-xl md:2xl font-semibold md:font-bold text-primary'>Contest<span className='text-secondary'>H</span>ub</h2>
                     </div>
                 </a>
             </div>
@@ -58,7 +72,7 @@ const Navbar = () => {
                 <div className='hidden lg:flex '>
                     <label className="swap swap-rotate">
                         {/* this hidden checkbox controls the state */}
-                        <input type="checkbox" className="theme-controller" value="synthwave" />
+                        <input onChange={(e) => handleTheme(e.target.checked)} type="checkbox" className="theme-controller" value="synthwave" />
 
                         {/* sun icon */}
                         <svg
