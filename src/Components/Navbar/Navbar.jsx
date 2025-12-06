@@ -1,8 +1,15 @@
 import React from 'react';
 import { GoTrophy } from 'react-icons/go';
 import { Link, NavLink } from 'react-router';
+import useAuth from '../../Hook/useAuth';
 
 const Navbar = () => {
+
+    const { user, userSignOut } = useAuth()
+
+    const handleSignOut = async () => {
+        const result = await userSignOut()
+    }
 
     const links = <>
         <li><NavLink>Home</NavLink></li>
@@ -23,11 +30,13 @@ const Navbar = () => {
                         {
                             links
                         }
+                        {
+                            !user && <div className='flex gap-5'>
+                                <Link to='login' className='font-medium btn btn-sm btn-primary'>Login</Link>
+                                <Link to='register' className='font-medium btn btn-sm btn-primary'>Sign Up</Link>
+                            </div>
+                        }
 
-                        <div className='flex gap-5'>
-                            <Link to='login' className='font-medium btn btn-sm btn-primary'>Login</Link>
-                            <Link to='register' className='font-medium btn btn-sm btn-primary'>Sign Up</Link>
-                        </div>
                     </ul>
                 </div>
                 <a className=" text-xl">
@@ -71,9 +80,20 @@ const Navbar = () => {
                     </label>
                 </div>
 
-                <div className=' md:flex md:flex-row gap-4 hidden '>
-                    <Link to='login' className='font-medium btn btn-primary'>Login</Link>
-                    <Link to='register' className='font-medium btn btn-primary'>Sign Up</Link>
+                <div className=' '>
+                    {
+                        user ?
+                            <div>
+                                <button onClick={handleSignOut} className='btn btn-sm text-primary btn-secondary'>Sign Out</button>
+                            </div>
+
+                            :
+                            <div className='md:flex md:flex-row gap-4 hidden '>
+                                <Link to='login' className='font-medium btn btn-sm btn-primary'>Login</Link>
+                                <Link to='register' className='font-medium btn btn-sm btn-primary'>Sign Up</Link>
+                            </div>
+                    }
+
                 </div>
             </div>
         </div>
