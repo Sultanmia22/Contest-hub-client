@@ -26,9 +26,9 @@ const Navbar = () => {
     }
 
     const links = <>
-        <li><NavLink>Home</NavLink></li>
-        <li><NavLink>All Contest</NavLink></li>
-        <li><NavLink>About</NavLink></li>
+        <li><NavLink to='/'>Home</NavLink></li>
+        <li><NavLink to='dami1'>All Contest</NavLink></li>
+        <li><NavLink to='dami1'>About</NavLink></li>
     </>
 
     return (
