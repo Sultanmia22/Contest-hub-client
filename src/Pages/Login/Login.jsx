@@ -1,23 +1,43 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import GoogleLogin from '../../Components/SocialLogin/GoogleLogin';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import useAuth from '../../Hook/useAuth';
+import { toast } from 'react-toastify';
 
 const Login = () => {
 
-      const {
-            register,
-            handleSubmit,
-            watch,
-            formState: { errors },
-        } = useForm();
-    
-        const handleLogin = (data) => {
-            console.log(data)
+    const { loginUsers } = useAuth()
+
+    const navigate = useNavigate()
+
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm();
+
+    const handleLogin = async (data) => {
+
+        try {
+            const email = data.email;
+            const password = data.password;
+
+            const result = await loginUsers(email, password);
+            const user = result.user;
+
+            toast.success('Login Successfully!')
+            navigate('/')
         }
+        catch (er) {
+            console.log(er)
+            toast.error(er)
+        }
+    }
 
     return (
-       <div className='flex flex-col justify-center items-center min-h-screen'>
+        <div className='flex flex-col justify-center items-center min-h-screen'>
             <div className='space-y-2 pb-5 text-center'>
                 <h2 className='text-4xl font-bold text-secondary text-center'> Welcome to ContestHub </h2>
                 <p className='text-secondary'>Login with ContestHub</p>

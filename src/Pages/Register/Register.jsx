@@ -1,19 +1,38 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import GoogleLogin from '../../Components/SocialLogin/GoogleLogin';
+import useAuth from '../../Hook/useAuth';
+import { toast } from 'react-toastify';
 
 const Register = () => {
 
-       const {
+    const { createUser } = useAuth()
+    const navigate = useNavigate()
+
+    const {
         register,
         handleSubmit,
         watch,
         formState: { errors },
     } = useForm();
 
-    const handleRegister = (data) => {
-        console.log(data)
+    const handleRegister = async (data) => {
+
+        try {
+            const email = data.email;
+            const password = data.password;
+
+            const result = await createUser(email, password)
+            const user = result.user;
+
+            toast.success('Registration Successfully!');
+            navigate('/')
+        }
+        catch (er) {
+            console.log(er)
+        }
+
     }
 
     return (
@@ -51,7 +70,7 @@ const Register = () => {
 
                         </fieldset>
                     </form>
-                    <GoogleLogin/>
+                    <GoogleLogin />
                     <p>Already have an Account? <Link to='/login' className='font-bold text-secondary'>Login</Link></p>
                 </div>
             </div>
