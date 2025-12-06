@@ -7,7 +7,7 @@ const GoogleLogin = () => {
     const {googleSignIn} = useAuth()
 
     const handleGoogleLogin = async () => {
-        const result = await googleSignIn()
+        const result = await googleSignIn()       
     }
 
     return (

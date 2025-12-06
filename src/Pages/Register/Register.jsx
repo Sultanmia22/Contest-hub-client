@@ -4,10 +4,11 @@ import { Link, useNavigate } from 'react-router';
 import GoogleLogin from '../../Components/SocialLogin/GoogleLogin';
 import useAuth from '../../Hook/useAuth';
 import { toast } from 'react-toastify';
+import { uploadImage } from '../../Utils';
 
 const Register = () => {
 
-    const { createUser } = useAuth()
+    const { createUser,updateUserProfile} = useAuth()
     const navigate = useNavigate()
 
     const {
@@ -20,11 +21,25 @@ const Register = () => {
     const handleRegister = async (data) => {
 
         try {
+            const name = data.name
             const email = data.email;
             const password = data.password;
+            const imageData = data.image[0]
+            console.log(imageData)
 
             const result = await createUser(email, password)
             const user = result.user;
+
+            //uploadImage by imagebb 
+            const imageURL = await uploadImage(imageData)
+            console.log(imageURL)
+
+            //update profile 
+            const profileInfo = {
+                displayName: name,
+                photoURL: imageURL
+            }
+            const profile = await updateUserProfile(profileInfo)
 
             toast.success('Registration Successfully!');
             navigate('/')
