@@ -43,6 +43,7 @@ const useAxiosSecure = () => {
 
 
     }, [user,navigate,userSignOut])
+    
 
     return axiosInstance
 };
