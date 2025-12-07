@@ -109,7 +109,7 @@ const Navbar = () => {
                                     } /* as React.CSSProperties */}>
 
                                     <li className='text-primary text-[16px] font-semibold'> {user?.displayName} </li>
-                                    <Link className='text-primary text-[16px] font-semibold'>Dashboard</Link>
+                                    <Link to='/dashboard' className='text-primary text-[16px] font-semibold'>Dashboard</Link>
 
                                     <div className='lg:hidden flex '>
                                         <label className="swap swap-rotate">
