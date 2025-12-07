@@ -4,7 +4,7 @@ import useAuth from './useAuth';
 import { useNavigate } from 'react-router';
 
 const axiosInstance = axios.create({
-    baseURL: import.meta.env.,
+    baseURL: import.meta.env.VITE_SERVER_URL
 })
 
 const useAxiosSecure = () => {

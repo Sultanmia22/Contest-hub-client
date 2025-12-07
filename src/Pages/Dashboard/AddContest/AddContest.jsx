@@ -1,15 +1,23 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { uploadImage } from '../../../Utils';
+import useAxiosSecure from '../../../Hook/useAxiosSecure';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router';
 
 const AddContest = () => {
+    const navigate = useNavigate()
+    const axiosSecure = useAxiosSecure()
+
     const {
         register,
         handleSubmit,
         formState: { errors },
+        reset
     } = useForm();
 
     const handleAddContest = async (data) => {
+        
         try {
             const imageData = data.contestImage[0]
             const imageURL = await uploadImage(imageData)
@@ -25,7 +33,10 @@ const AddContest = () => {
                 deadline: data.deadline,
             }
 
-            console.log(addContestInfo)
+            const result = await axiosSecure.post('/add-contest',addContestInfo);
+            toast.success('Created Contest Successfully')
+             reset()
+             navigate('/dashboard/my-contest')
         }
         catch (er) {
             console.log(er)
@@ -40,7 +51,7 @@ const AddContest = () => {
                     <h2 className='text-primary text-xl md:text-5xl font-bold'>Create New Contest</h2>
                     <p className='text-sm md:text-[16px]'>Fill in the details to launch your amazing contest</p>
                 </div>
-                <div onSubmit={handleSubmit(handleAddContest)}>
+                <form onSubmit={handleSubmit(handleAddContest)}>
                     <div className='fieldset flex-1'>
 
                         {/* Contest Name */}
@@ -145,11 +156,11 @@ const AddContest = () => {
 
                     </div>
                     <div className='pt-5'>
-                        <button onClick={handleSubmit(handleAddContest)} className='btn btn-primary w-full'>
+                        <button type='submit' onClick={handleSubmit(handleAddContest)} className='btn btn-primary w-full'>
                             Create Contest
                         </button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     );

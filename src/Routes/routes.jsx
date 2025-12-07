@@ -7,6 +7,7 @@ import Home from "../Pages/Home/Home";
 import ErrorPage from "../Pages/ErrorPage/ErrorPage";
 import DashboradLayouts from "../Layouts/DashboardLayouts/DashboradLayouts";
 import AddContest from "../Pages/Dashboard/AddContest/AddContest";
+import MyContest from "../Pages/Dashboard/MyContest/MyContest";
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,11 @@ const router = createBrowserRouter([
       {
         path: 'add-contest',
         element: <AddContest/>
+      },
+
+      {
+        path: 'my-contest',
+        element: <MyContest/>
       }
     ]
   }
