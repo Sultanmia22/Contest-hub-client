@@ -5,10 +5,11 @@ import GoogleLogin from '../../Components/SocialLogin/GoogleLogin';
 import useAuth from '../../Hook/useAuth';
 import { toast } from 'react-toastify';
 import { uploadImage } from '../../Utils';
+import axios from 'axios';
 
 const Register = () => {
 
-    const { createUser,updateUserProfile} = useAuth()
+    const { createUser, updateUserProfile } = useAuth()
     const navigate = useNavigate()
 
     const {
@@ -40,6 +41,14 @@ const Register = () => {
                 photoURL: imageURL
             }
             const profile = await updateUserProfile(profileInfo)
+
+            // Insert Data in database 
+            const userInfo = {
+                name: name,
+                email: email,
+                image: imageURL,
+            }
+            const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/user`, userInfo);
 
             toast.success('Registration Successfully!');
             navigate('/')

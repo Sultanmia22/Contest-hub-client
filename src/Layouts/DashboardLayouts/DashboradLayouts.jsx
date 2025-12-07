@@ -16,7 +16,7 @@ const DashboradLayouts = () => {
       <div className="px-4 text-primary font-semibold">Navbar Title</div>
     </nav>
     {/* OUTLET */}
-    <div className='bg-[#D1F5F3] dark:bg-gray-800 min-h-screen'>
+    <div className='bg-[#D1F5F3] dark:bg-gray-800 min-h-screen '>
         <Outlet/>
         
     </div>
