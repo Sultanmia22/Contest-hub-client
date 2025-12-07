@@ -4,7 +4,7 @@ import WinnerCard from './WinnerCard';
 
 const Winner = () => {
     return (
-        <div className='py-30'>
+        <div className='py-10 my-40 bg-secondary px-4 md:px-30 rounded-xl'>
 
             <TypeAnimation
                     sequence={['Celebrate Recent Winners', 500, '',500]}
@@ -13,7 +13,7 @@ const Winner = () => {
                     className='text-primary text-center block font-bold text-2xl md:text-5xl'
                 />
 
-            <div className='bg-base-100 max-w-[400px] mx-auto p-6 my-5 rounded-xl'>
+            <div className='bg-base-100 max-w-[600px] mx-auto p-6 my-5 rounded-xl'>
                 <h2 className='text-xl font-bold  text-center my-2'> Our Success in Numbers </h2>
                 
                 <div className='flex justify-between items-center'>

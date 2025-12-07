@@ -30,11 +30,8 @@ const AuthProvider = ({children}) => {
     }
 
     // Update profile 
-      const updateUserProfile = (name, photo) => {
-    return updateProfile(auth.currentUser, {
-      displayName: name,
-      photoURL: photo,
-    })
+      const updateUserProfile = (profileInfo) => {
+    return updateProfile(auth.currentUser,profileInfo)
   }
 
     // user observe on auth 
@@ -48,6 +45,8 @@ const AuthProvider = ({children}) => {
             return unsubscribe()
         }
     },[])
+
+    console.log(user)
 
     const authInfo = {
         createUser,

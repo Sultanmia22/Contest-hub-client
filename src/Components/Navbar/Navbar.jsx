@@ -56,7 +56,7 @@ const Navbar = () => {
                 <a className=" text-xl">
                     <div className='flex items-center gap-2'>
                         <GoTrophy size={24} className='text-primary font-bold' />
-                        <h2 className='text-xl md:2xl font-semibold md:font-bold text-primary'>Contest<span className='text-secondary'>H</span>ub</h2>
+                        <h2 className='text-xl md:2xl font-semibold md:font-bold text-primary'>Contest<span className='text-yellow-400'>H</span>ub</h2>
                     </div>
                 </a>
             </div>

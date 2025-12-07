@@ -1,6 +1,7 @@
 import React from 'react';
 import Banner from '../../Components/Banner/Banner';
 import Winner from '../../Components/Winner/Winner';
+import Works from '../../Components/HowItWorks/Works';
 
 const Home = () => {
     return (
@@ -10,6 +11,7 @@ const Home = () => {
             {/* moost popular contest section */}
 
             <Winner></Winner>
+            <Works/>
         </div>
     );
 };
