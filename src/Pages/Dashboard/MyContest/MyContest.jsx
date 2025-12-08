@@ -4,23 +4,24 @@ import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import useAuth from '../../../Hook/useAuth';
 import useAxiosSecure from '../../../Hook/useAxiosSecure';
+import Loading from '../../../Components/LoadingPage/Loading';
 
 const MyContest = () => {
-    const {user} = useAuth()
+    const { user } = useAuth()
     const axiosSecure = useAxiosSecure()
-    const {data:contest = [], isLoading} = useQuery({
-        queryKey: ['my-contest',user?.email],
-        queryFn: async() => {
+    const { data: contests = [], isLoading } = useQuery({
+        queryKey: ['my-contest', user?.email],
+        queryFn: async () => {
             const result = await axiosSecure.get(`/my-contest?email=${user?.email}`)
             return result.data;
         }
     })
 
-    console.log(contest)
-
-    if(isLoading){
-        return <div>Loading...</div>
+    if (isLoading) {
+        return <Loading />
     }
+
+    const { contestName, contestImage, entryPrice, prizeMoney, contestType, description, taskInstruction, deadline, creatorEmail, status, participantsCount, winner, createdAt } = contests;
 
     return (
         <div className='flow-root'>
@@ -46,24 +47,28 @@ const MyContest = () => {
 
                         <tbody>
 
-                            {/* row 1 */}
-                            <tr className='bg-base-100 text-primary font-medium text-sm '>
-                                <th>1</th>
-                                <td>Cy Ganderton</td>
-                                <td>Quality Control Specialist</td>
-                                <td>Blue</td>
-                                <td>Blue</td>
+                            {
+                                contests.map((contest, index) =>
+                                    <tr className='bg-base-100 text-primary font-medium text-sm '>
+                                        <th>{index+1}</th>
+                                        <td>{contest.contestName}</td>
+                                        <td>{contest.status}</td>
+                                        <td>{contest.participantsCount}</td>
+                                        <td>{contest.prizeMoney}</td>
 
-                                <td className='flex flex-row gap-2'>
-                                    <button className='btn btn-xs btn-primary'>
-                                        <FaRegEdit size={14} />
-                                    </button>
+                                        <td className='flex flex-row gap-2'>
+                                            <button className='btn btn-xs btn-primary'>
+                                                <FaRegEdit size={14} />
+                                            </button>
 
-                                    <button className='btn btn-xs btn-error'>
-                                        <RiDeleteBinLine size={14} />
-                                    </button>
-                                </td>
-                            </tr>
+                                            <button className='btn btn-xs btn-error'>
+                                                <RiDeleteBinLine size={14} />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )
+                            }
+
 
                         </tbody>
                     </table>
