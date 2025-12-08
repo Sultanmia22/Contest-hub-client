@@ -5,6 +5,7 @@ import { RiDeleteBinLine } from 'react-icons/ri';
 import useAuth from '../../../Hook/useAuth';
 import useAxiosSecure from '../../../Hook/useAxiosSecure';
 import Loading from '../../../Components/LoadingPage/Loading';
+import { Link } from 'react-router';
 
 const MyContest = () => {
     const { user } = useAuth()
@@ -57,9 +58,9 @@ const MyContest = () => {
                                         <td>{contest.prizeMoney}</td>
 
                                         <td className='flex flex-row gap-2'>
-                                            <button className='btn btn-xs btn-primary'>
+                                            <Link to={`/dashboard/edit-cotest/${contest?._id}`} className='btn btn-xs btn-primary'>
                                                 <FaRegEdit size={14} />
-                                            </button>
+                                            </Link>
 
                                             <button className='btn btn-xs btn-error'>
                                                 <RiDeleteBinLine size={14} />

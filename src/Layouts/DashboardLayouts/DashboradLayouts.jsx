@@ -143,17 +143,6 @@ const DashboradLayouts = () => {
                     <span className="is-drawer-close:hidden">Submitted Tasks</span>
                   </NavLink>
                 </li>
-
-                <li>
-                  <NavLink to='edit-contest' className={({ isActive }) =>
-                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
-                    }`
-                  } data-tip="Edit contest">
-                    {/* Edit contest */}
-                    <RiFileEditFill size={22} />
-                    <span className="is-drawer-close:hidden">Edit contest</span>
-                  </NavLink>
-                </li>
               </>
 
             }

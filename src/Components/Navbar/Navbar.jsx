@@ -99,7 +99,7 @@ const Navbar = () => {
                         user ?
                             <div className='pr-4 md:pr-0'>
                                 <button className=" cursor-pointer w-12 h-12 rounded-full border-2 border-primary" popoverTarget="popover-1" style={{ anchorName: "--anchor-1" } /* as React.CSSProperties */}>
-                                    <img src='https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740&q=80' alt="" className='w-12 h-12 rounded-full p-1'/>
+                                    <img src={user?.photoURL} alt="" className='w-12 h-12 rounded-full p-1'/>
                                 </button>
 
                                 <ul className="dropdown menu rounded-box bg-secondary shadow-sm flex flex-col gap-2 md:px-5 md:py-7"

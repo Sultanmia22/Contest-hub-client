@@ -8,6 +8,7 @@ import ErrorPage from "../Pages/ErrorPage/ErrorPage";
 import DashboradLayouts from "../Layouts/DashboardLayouts/DashboradLayouts";
 import AddContest from "../Pages/Dashboard/AddContest/AddContest";
 import MyContest from "../Pages/Dashboard/MyContest/MyContest";
+import EditContest from "../Pages/Dashboard/EditContest/EditContest";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,11 @@ const router = createBrowserRouter([
       {
         path: 'my-contest',
         element: <MyContest/>
+      },
+
+      {
+        path: '/dashboard/edit-cotest/:id',
+        element: <EditContest/>
       }
     ]
   }
