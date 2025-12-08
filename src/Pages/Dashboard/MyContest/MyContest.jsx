@@ -1,8 +1,27 @@
+import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBinLine } from 'react-icons/ri';
+import useAuth from '../../../Hook/useAuth';
+import useAxiosSecure from '../../../Hook/useAxiosSecure';
 
 const MyContest = () => {
+    const {user} = useAuth()
+    const axiosSecure = useAxiosSecure()
+    const {data:contest = [], isLoading} = useQuery({
+        queryKey: ['my-contest',user?.email],
+        queryFn: async() => {
+            const result = await axiosSecure.get(`/my-contest?email=${user?.email}`)
+            return result.data;
+        }
+    })
+
+    console.log(contest)
+
+    if(isLoading){
+        return <div>Loading...</div>
+    }
+
     return (
         <div className='flow-root'>
             <div className='mx-4 my-4 md:m-10'>

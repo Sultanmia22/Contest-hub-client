@@ -4,8 +4,10 @@ import { uploadImage } from '../../../Utils';
 import useAxiosSecure from '../../../Hook/useAxiosSecure';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router';
+import useAuth from '../../../Hook/useAuth';
 
 const AddContest = () => {
+    const {user} = useAuth()
     const navigate = useNavigate()
     const axiosSecure = useAxiosSecure()
 
@@ -31,6 +33,7 @@ const AddContest = () => {
                 description: data.description,
                 taskInstruction: data.taskInstruction,
                 deadline: data.deadline,
+                creatorEmail: user?.email
             }
 
             const result = await axiosSecure.post('/add-contest',addContestInfo);
