@@ -1,9 +1,19 @@
 import React from 'react';
-import { FaRegFolderOpen } from 'react-icons/fa';
-import { MdOutlinePostAdd } from 'react-icons/md';
+import { FaRegFolderOpen, FaUserCircle } from 'react-icons/fa';
+import { MdCoPresent, MdOutlineManageHistory, MdOutlinePostAdd } from 'react-icons/md';
 import { Link, NavLink, Outlet } from 'react-router';
+import UseRole from '../../Hook/UseRole';
+import { GrTask } from 'react-icons/gr';
+import { RiFileEditFill, RiPresentationFill } from 'react-icons/ri';
+import { GiTightrope } from 'react-icons/gi';
+import { FaUsersGear } from 'react-icons/fa6';
+import { GoTrophy } from 'react-icons/go';
 
 const DashboradLayouts = () => {
+
+  const { role, roleLoading } = UseRole()
+
+
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
@@ -29,6 +39,15 @@ const DashboradLayouts = () => {
           {/* Sidebar content here */}
           <ul className="menu w-full grow">
             {/* List item */}
+
+             <li>
+              <Link to='/' className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Homepage">
+                {/* Home icon */}
+                <GoTrophy />
+                <span className="is-drawer-close:hidden text-xl font-bold">Contest<span className='text-yellow-500'>H</span>ub</span>
+              </Link>
+            </li>
+
             <li>
               <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Homepage">
                 {/* Home icon */}
@@ -37,32 +56,143 @@ const DashboradLayouts = () => {
               </button>
             </li>
 
+            {/* -------  USER DASHBOARD SECTION LIST START -------- */}
+
+            {
+              role === 'user' &&
+              <>
+                <li>
+                  <NavLink to='my_participated_contests' className={({ isActive }) =>
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    }`
+                  } data-tip="My Participated Contests">
+                    {/* Add Contest */}
+                    <RiPresentationFill size={22} />
+                    <span className="is-drawer-close:hidden">My Participated Contests</span>
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink to='my_winning_contests' className={({ isActive }) =>
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    }`
+                  } data-tip="My Winning Contests">
+                    {/* Add Contest */}
+                    <GiTightrope size={22} />
+                    <span className="is-drawer-close:hidden">My Winning Contests</span>
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink to='user-profile' className={({ isActive }) =>
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    }`
+                  } data-tip="My Profile">
+                    {/* Add Contest */}
+                    <FaUserCircle size={22} />
+                    <span className="is-drawer-close:hidden">My Profile</span>
+                  </NavLink>
+                </li>
+              </>
+            }
+
+
+            {/* -------  USER DASHBOARD SECTION LIST END -------- */}
+
+
+
+            {/* ------------------------------------------xxxxxxx---------------------------------------- */}
+
+
+
+
             {/* -------  CONTEST CREATOR DASHBOARD SECTION LIST START -------- */}
 
-            {/* Add Contest */}
-            <li>
-              <NavLink to='add-contest' className={({ isActive }) =>
-                `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
-                }`
-              } data-tip="Add Contest">
-                {/* Add Contest */}
-                <MdOutlinePostAdd size={22} />
-                <span className="is-drawer-close:hidden">Add Contest</span>
-              </NavLink>
-            </li>
+            {role === 'creator' &&
 
-            <li>
-              <NavLink to='my-contest' className={({ isActive }) =>
-                `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
-                }`
-              } data-tip="My Created Contests">
-                {/* My Created Contests */}
-                <FaRegFolderOpen size={22} />
-                <span className="is-drawer-close:hidden">My Created Contests</span>
-              </NavLink>
-            </li>
+              <>
+                <li>
+                  <NavLink to='add-contest' className={({ isActive }) =>
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    }`
+                  } data-tip="Add Contest">
+                    {/* Add Contest */}
+                    <MdOutlinePostAdd size={22} />
+                    <span className="is-drawer-close:hidden">Add Contest</span>
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink to='my-contest' className={({ isActive }) =>
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    }`
+                  } data-tip="My Created Contests">
+                    {/* My Created Contests */}
+                    <FaRegFolderOpen size={22} />
+                    <span className="is-drawer-close:hidden">My Created Contests</span>
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink to='submitted-task' className={({ isActive }) =>
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    }`
+                  } data-tip="Submitted Tasks">
+                    {/* Submitted Tasks */}
+                    <GrTask size={22} />
+                    <span className="is-drawer-close:hidden">Submitted Tasks</span>
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink to='edit-contest' className={({ isActive }) =>
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    }`
+                  } data-tip="Edit contest">
+                    {/* Edit contest */}
+                    <RiFileEditFill size={22} />
+                    <span className="is-drawer-close:hidden">Edit contest</span>
+                  </NavLink>
+                </li>
+              </>
+
+            }
 
             {/* -------  CONTEST CREATOR DASHBOARD SECTION LIST END -------- */}
+
+
+
+            {/* ------------------------------------------xxxxxxx---------------------------------------- */}
+
+            {/* -------  ADMIN DASHBOARD SECTION LIST START -------- */}
+
+            {role === 'admin' &&
+              <>
+                <li>
+                  <NavLink to='manage_users' className={({ isActive }) =>
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    }`
+                  } data-tip="Manage Users">
+                    {/* Add Contest */}
+                    <FaUsersGear size={22} />
+                    <span className="is-drawer-close:hidden">Manage Users</span>
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink to='manage-contests ' className={({ isActive }) =>
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    }`
+                  } data-tip="Manage Contest">
+                    {/* Add Contest */}
+                    <MdOutlineManageHistory size={22} />
+                    <span className="is-drawer-close:hidden">Manage Contest</span>
+                  </NavLink>
+                </li>
+              </>
+            }
+
+            {/* -------  ADMIN DASHBOARD SECTION LIST START -------- */}
 
             {/* List item */}
             <li>
