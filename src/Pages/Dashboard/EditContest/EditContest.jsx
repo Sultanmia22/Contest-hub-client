@@ -88,7 +88,7 @@ const EditContest = () => {
                             defaultValue={contestName}
                             type="text"
                             {...register('contestName', { required: 'Contest name is required' })}
-                            className="input w-full border border-secondary"
+                            className="input w-full border border-secondary focus:border-0"
                             placeholder="write your contest name"
                         />
                         {errors.contestName && <span className='text-red-500 text-sm'>{errors.contestName.message}</span>}
@@ -100,7 +100,7 @@ const EditContest = () => {
                         <input
                             type="file"
                             {...register('contestImage',)}
-                            className="file-input w-full border border-secondary"
+                            className="file-input w-full border border-secondary focus:border-0"
                         />
                         <div className='w-full md:h-[200px]'> <img src={contestImage} alt="" /> </div>
 
@@ -113,7 +113,7 @@ const EditContest = () => {
                             defaultValue={entryPrice}
                             type="number"
                             {...register('entryPrice', { required: 'Entry price is required' })}
-                            className="input w-full border border-secondary"
+                            className="input w-full border border-secondary focus:border-0"
                             placeholder="500"
                         />
                         {errors.entryPrice && <span className='text-red-500 text-sm'>{errors.entryPrice.message}</span>}
@@ -126,7 +126,7 @@ const EditContest = () => {
                             defaultValue={prizeMoney}
                             type="number"
                             {...register('prizeMoney', { required: 'Prize money is required' })}
-                            className="input w-full border border-secondary"
+                            className="input w-full border border-secondary focus:border-0"
                             placeholder="5000"
                         />
                         {errors.prizeMoney && <span className='text-red-500 text-sm'>{errors.prizeMoney.message}</span>}
@@ -138,7 +138,7 @@ const EditContest = () => {
                         <select
 
                             {...register('contestType', { required: 'Please select a contest type' })}
-                            className="select w-full border border-secondary"
+                            className="select w-full border border-secondary focus:border-0"
                             defaultValue={contestType}
                         >
                             <option value="">Select type</option>
@@ -159,7 +159,7 @@ const EditContest = () => {
                         <textarea
                             defaultValue={description}
                             {...register('description', { required: 'Description is required' })}
-                            className="textarea w-full border border-secondary"
+                            className="textarea w-full border border-secondary focus:border-0"
                             placeholder="Describe your contest details, requirements, and expectations..."
                         ></textarea>
                         {errors.description && <span className='text-red-500 text-sm'>{errors.description.message}</span>}
@@ -171,7 +171,7 @@ const EditContest = () => {
                         <textarea
                             defaultValue={taskInstruction}
                             {...register('taskInstruction', { required: 'Task instructions are required' })}
-                            className="textarea w-full border border-secondary"
+                            className="textarea w-full border border-secondary focus:border-0"
                             placeholder="What should participants do? Provide clear step-by-step instructions..."
                         ></textarea>
                         {errors.taskInstruction && <span className='text-red-500 text-sm'>{errors.taskInstruction.message}</span>}
@@ -184,7 +184,7 @@ const EditContest = () => {
                             defaultValue={deadline}
                             type="date"
                             {...register('deadline', { required: 'Deadline is required' })}
-                            className="input w-full border border-secondary"
+                            className="input w-full border border-secondary focus:border-0"
                         />
                         {errors.deadline && <span className='text-red-500 text-sm'>{errors.deadline.message}</span>}
 
