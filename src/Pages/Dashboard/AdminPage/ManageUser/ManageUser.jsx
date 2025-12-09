@@ -58,7 +58,7 @@ const ManageUser = () => {
                         <tbody>
                             {
                                 users.map((user, index) =>
-                                    <tr>
+                                    <tr className='bg-base-100 text-primary dark:text-white font-medium text-sm '>
                                         <th>
                                             {index + 1}
                                         </th>

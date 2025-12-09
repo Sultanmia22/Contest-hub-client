@@ -169,7 +169,7 @@ const DashboradLayouts = () => {
                 </li>
 
                 <li>
-                  <NavLink to='manage-contests ' className={({ isActive }) =>
+                  <NavLink to='manage-contests' className={({ isActive }) =>
                     `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
                     }`
                   } data-tip="Manage Contest">
