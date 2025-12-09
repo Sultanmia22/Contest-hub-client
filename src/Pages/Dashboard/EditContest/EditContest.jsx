@@ -1,13 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import useAxiosSecure from '../../../Hook/useAxiosSecure';
 import Loading from '../../../Components/LoadingPage/Loading';
+import { uploadImage } from '../../../Utils';
+import { toast } from 'react-toastify';
+
 
 const EditContest = () => {
     const { id } = useParams()
     const axiosSecure = useAxiosSecure()
+    const navigate = useNavigate()
 
     const { data: contest = {}, isLoading } = useQuery({
         queryKey: ['contest', id],
@@ -27,9 +31,40 @@ const EditContest = () => {
         reset
     } = useForm();
 
-    const handleUpdateEdit = (data) => {
-        console.log(data)
+    // EDIT CONTEST FUNCTION
+    const handleUpdateEdit = async (data) => {
+        try {
+            let finalImage = contestImage;
+            const imageData = data.contestImage
+    
+            if(imageData.length > 0){
+                const imageData = data.contestImage[0]
+                 const newImage = await uploadImage(imageData)
+                 finalImage = newImage
+            }
+           
+            const updateInfo = {
+                contestName: data.contestName ,
+                contestImage: finalImage,
+                entryPrice: data.entryPrice,
+                prizeMoney: data.prizeMoney,
+                contestType: data.contestType,
+                description: data.description,
+                taskInstruction: data.taskInstruction,
+                deadline: data.deadline,
+            }
+
+            const result = await axiosSecure.patch(`/contest-update/${id}`,updateInfo)
+            toast.success('Edit & updated successfully')
+            navigate('/dashboard/my-contest')
+        }
+        catch (er) {
+            console.log(er)
+        }
     }
+
+   
+    
 
     if (isLoading) {
         return <Loading />
@@ -63,12 +98,12 @@ const EditContest = () => {
                             Contest Image <span className='text-red-800'>*</span>
                         </label>
                         <input
-
                             type="file"
-                            {...register('contestImage', { required: 'Contest image is required' })}
+                            {...register('contestImage',)}
                             className="file-input w-full border border-secondary"
                         />
-                        {errors.contestImage && <span className='text-red-500 text-sm'>{errors.contestImage.message}</span>}
+                        <div className='w-full md:h-[200px]'> <img src={contestImage} alt="" /> </div>
+
 
                         {/* Entry Price */}
                         <label className="label text-primary text-[16px] font-medium mt-4">

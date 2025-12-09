@@ -6,11 +6,12 @@ import useAuth from '../../../Hook/useAuth';
 import useAxiosSecure from '../../../Hook/useAxiosSecure';
 import Loading from '../../../Components/LoadingPage/Loading';
 import { Link } from 'react-router';
+import { toast } from 'react-toastify';
 
 const MyContest = () => {
     const { user } = useAuth()
     const axiosSecure = useAxiosSecure()
-    const { data: contests = [], isLoading } = useQuery({
+    const { data: contests = [], isLoading , refetch} = useQuery({
         queryKey: ['my-contest', user?.email],
         queryFn: async () => {
             const result = await axiosSecure.get(`/my-contest?email=${user?.email}`)
@@ -18,11 +19,24 @@ const MyContest = () => {
         }
     })
 
+    // DELETE CONTEST FUNCTION 
+    const handleDeleteContest = async(id) => {
+        try{
+            const result = await axiosSecure.delete(`/delete-contest/${id}`)
+            refetch()
+            toast.success('Delete Successfully!')
+
+        }
+        catch(er){
+            console.log(er)
+        }
+    }
+
     if (isLoading) {
         return <Loading />
     }
 
-    const { contestName, contestImage, entryPrice, prizeMoney, contestType, description, taskInstruction, deadline, creatorEmail, status, participantsCount, winner, createdAt } = contests;
+    
 
     return (
         <div className='flow-root'>
@@ -62,7 +76,7 @@ const MyContest = () => {
                                                 <FaRegEdit size={14} />
                                             </Link>
 
-                                            <button className='btn btn-xs btn-error'>
+                                            <button onClick={() => handleDeleteContest(contest._id)} className='btn btn-xs btn-error'>
                                                 <RiDeleteBinLine size={14} />
                                             </button>
                                         </td>
