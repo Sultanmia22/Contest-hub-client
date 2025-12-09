@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 const MyContest = () => {
     const { user } = useAuth()
     const axiosSecure = useAxiosSecure()
-    const { data: contests = [], isLoading , refetch} = useQuery({
+    const { data: contests = [], isLoading, refetch } = useQuery({
         queryKey: ['my-contest', user?.email],
         queryFn: async () => {
             const result = await axiosSecure.get(`/my-contest?email=${user?.email}`)
@@ -20,14 +20,14 @@ const MyContest = () => {
     })
 
     // DELETE CONTEST FUNCTION 
-    const handleDeleteContest = async(id) => {
-        try{
+    const handleDeleteContest = async (id) => {
+        try {
             const result = await axiosSecure.delete(`/delete-contest/${id}`)
             refetch()
             toast.success('Delete Successfully!')
 
         }
-        catch(er){
+        catch (er) {
             console.log(er)
         }
     }
@@ -36,7 +36,7 @@ const MyContest = () => {
         return <Loading />
     }
 
-    
+
 
     return (
         <div className='flow-root'>
@@ -56,7 +56,7 @@ const MyContest = () => {
                                 <th>Status</th>
                                 <th>Participants</th>
                                 <th>Prize</th>
-                                <th>Action</th>
+                               {contests.some(c => c.status === 'pending') && <th>Action</th>}
                             </tr>
                         </thead>
 
@@ -65,21 +65,25 @@ const MyContest = () => {
                             {
                                 contests.map((contest, index) =>
                                     <tr className='bg-base-100 text-primary dark:text-white font-medium text-sm '>
-                                        <th>{index+1}</th>
+                                        <th>{index + 1}</th>
                                         <td>{contest.contestName}</td>
                                         <td>{contest.status}</td>
                                         <td>{contest.participantsCount}</td>
                                         <td>{contest.prizeMoney}</td>
 
-                                        <td className='flex flex-row gap-2'>
-                                            <Link to={`/dashboard/edit-cotest/${contest?._id}`} className='btn btn-xs btn-primary'>
-                                                <FaRegEdit size={14} />
-                                            </Link>
+                                        {contest.status === 'pending' &&
+                                            <>
+                                                <td className='flex flex-row gap-2'>
+                                                    <Link to={`/dashboard/edit-cotest/${contest?._id}`} className='btn btn-xs btn-primary'>
+                                                        <FaRegEdit size={14} />
+                                                    </Link>
 
-                                            <button onClick={() => handleDeleteContest(contest._id)} className='btn btn-xs btn-error'>
-                                                <RiDeleteBinLine size={14} />
-                                            </button>
-                                        </td>
+                                                    <button onClick={() => handleDeleteContest(contest._id)} className='btn btn-xs btn-error'>
+                                                        <RiDeleteBinLine size={14} />
+                                                    </button>
+                                                </td>
+                                            </>
+                                        }
                                     </tr>
                                 )
                             }
