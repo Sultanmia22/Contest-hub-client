@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 const ManageContest = () => {
     const axiosSecure = useAxiosSecure()
-    const { data: pendingContes = [], isLoading ,refetch} = useQuery({
+    const { data: pendingContes = [], isLoading, refetch } = useQuery({
         queryKey: ['pending-contest'],
         queryFn: async () => {
             const result = await axiosSecure.get('/pending-allcontest')
@@ -15,23 +15,31 @@ const ManageContest = () => {
     })
 
     // MANAGE CONTEST FUNTION 
-    const manageContest = async (id,status) => {
-        try{
-             const result = await axiosSecure.patch(`/update-contest-status/${id}`,status);
-             refetch()
-             toast.success(`${status} successfully`)
+    const manageContest = async (id, status) => {
+        try {
+            const result = await axiosSecure.patch(`/update-contest-status/${id}`, status);
+            refetch()
+            toast.success(`${status.status} successfully`)
         }
-        catch(er){
+        catch (er) {
             console.log(er)
         }
     }
 
-/*     const {contestName,contestImage,entryPrice,prizeMoney,contestType,description,taskInstruction,deadline,creatorEmail,status,participantsCount,winner,createdAt
-} = pendingContes; */
-    console.log(pendingContes)
+    // DELETE CONTEST 
+    const handleDeleteContest = async (id) => {
+        try {
+            const result = await axiosSecure.delete(`/contest/delete-by-admin/${id}`)
+            toast.success('Delete Successfully!');
+            refetch()
+        }
+        catch(er){
+            console.log(er);
+        }
+    }
 
-    if(isLoading){
-        return <Loading/>
+    if (isLoading) {
+        return <Loading />
     }
 
     return (
@@ -100,9 +108,9 @@ const ManageContest = () => {
 
                                         <td>
                                             <div className="flex items-center gap-2">
-                                                <button onClick={() => manageContest(contest?._id,{status:'confirmed'})} className='btn btn-xs text-primary btn-secondary'>Confirm </button>
-                                                <button onClick={() => manageContest(contest?._id,{status:'rejected'})} className='btn btn-xs btn-primary'>Reject </button>
-                                                <button className='btn btn-xs btn-error'>Delete</button>
+                                                <button onClick={() => manageContest(contest?._id, { status: 'confirmed' })} className='btn btn-xs text-primary btn-secondary'>Confirm </button>
+                                                <button onClick={() => manageContest(contest?._id, { status: 'rejected' })} className='btn btn-xs btn-primary'>Reject </button>
+                                                <button onClick={()=> handleDeleteContest(contest?._id) } className='btn btn-xs btn-error'>Delete</button>
                                             </div>
                                         </td>
                                     </tr>
