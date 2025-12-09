@@ -64,7 +64,7 @@ const MyContest = () => {
 
                             {
                                 contests.map((contest, index) =>
-                                    <tr className='bg-base-100 text-primary font-medium text-sm '>
+                                    <tr className='bg-base-100 text-primary dark:text-white font-medium text-sm '>
                                         <th>{index+1}</th>
                                         <td>{contest.contestName}</td>
                                         <td>{contest.status}</td>

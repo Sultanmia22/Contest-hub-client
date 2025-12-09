@@ -9,6 +9,7 @@ import DashboradLayouts from "../Layouts/DashboardLayouts/DashboradLayouts";
 import AddContest from "../Pages/Dashboard/AddContest/AddContest";
 import MyContest from "../Pages/Dashboard/MyContest/MyContest";
 import EditContest from "../Pages/Dashboard/EditContest/EditContest";
+import ManageUser from "../Pages/Dashboard/AdminPage/ManageUser/ManageUser";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +57,11 @@ const router = createBrowserRouter([
       {
         path: '/dashboard/edit-cotest/:id',
         element: <EditContest/>
+      },
+
+      {
+        path: 'manage_users',
+        element: <ManageUser/>
       }
     ]
   }
