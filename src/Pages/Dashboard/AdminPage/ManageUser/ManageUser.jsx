@@ -81,9 +81,9 @@ const ManageUser = () => {
 
                                         <td>
                                             <div className="flex items-center gap-2">
-                                                <button onClick={() => manageUser(user?._id,'user')} className='btn btn-xs text-primary btn-secondary'>User</button>
-                                                <button onClick={() => manageUser(user?._id,'creator')} className='btn btn-xs btn-primary'>Creator</button>
-                                                <button onClick={() => manageUser(user?._id,'admin')} className='btn btn-xs btn-error'>Admin</button>
+                                                <button onClick={() => manageUser(user?._id,{role:'user'})} className='btn btn-xs text-primary btn-secondary'>User</button>
+                                                <button onClick={() => manageUser(user?._id,{role:'creator'})} className='btn btn-xs btn-primary'>Creator</button>
+                                                <button onClick={() => manageUser(user?._id,{role:'admin'})} className='btn btn-xs btn-error'>Admin</button>
                                             </div>
                                         </td>
                                     </tr>

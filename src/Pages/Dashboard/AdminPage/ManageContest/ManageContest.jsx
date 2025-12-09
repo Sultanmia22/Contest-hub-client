@@ -2,16 +2,29 @@ import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import useAxiosSecure from '../../../../Hook/useAxiosSecure';
 import Loading from '../../../../Components/LoadingPage/Loading';
+import { toast } from 'react-toastify';
 
 const ManageContest = () => {
     const axiosSecure = useAxiosSecure()
-    const { data: pendingContes = [], isLoading } = useQuery({
+    const { data: pendingContes = [], isLoading ,refetch} = useQuery({
         queryKey: ['pending-contest'],
         queryFn: async () => {
             const result = await axiosSecure.get('/pending-allcontest')
             return result.data
         }
     })
+
+    // MANAGE CONTEST FUNTION 
+    const manageContest = async (id,status) => {
+        try{
+             const result = await axiosSecure.patch(`/update-contest-status/${id}`,status);
+             refetch()
+             toast.success(`${status} successfully`)
+        }
+        catch(er){
+            console.log(er)
+        }
+    }
 
 /*     const {contestName,contestImage,entryPrice,prizeMoney,contestType,description,taskInstruction,deadline,creatorEmail,status,participantsCount,winner,createdAt
 } = pendingContes; */
@@ -87,8 +100,8 @@ const ManageContest = () => {
 
                                         <td>
                                             <div className="flex items-center gap-2">
-                                                <button className='btn btn-xs text-primary btn-secondary'>Confirm </button>
-                                                <button className='btn btn-xs btn-primary'>Reject </button>
+                                                <button onClick={() => manageContest(contest?._id,{status:'confirmed'})} className='btn btn-xs text-primary btn-secondary'>Confirm </button>
+                                                <button onClick={() => manageContest(contest?._id,{status:'rejected'})} className='btn btn-xs btn-primary'>Reject </button>
                                                 <button className='btn btn-xs btn-error'>Delete</button>
                                             </div>
                                         </td>
