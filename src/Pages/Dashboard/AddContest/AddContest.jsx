@@ -33,7 +33,8 @@ const AddContest = () => {
                 description: data.description,
                 taskInstruction: data.taskInstruction,
                 deadline: data.deadline,
-                creatorEmail: user?.email
+                creatorEmail: user?.email,
+                creator:user?.displayName,
             }
 
             const result = await axiosSecure.post('/add-contest',addContestInfo);
