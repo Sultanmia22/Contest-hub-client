@@ -56,7 +56,7 @@ const MyContest = () => {
                                 <th>Status</th>
                                 <th>Participants</th>
                                 <th>Prize</th>
-                               {contests.some(c => c.status === 'pending') && <th>Action</th>}
+                                <th>Action</th>
                             </tr>
                         </thead>
 
@@ -71,23 +71,18 @@ const MyContest = () => {
                                         <td>{contest.participantsCount}</td>
                                         <td>{contest.prizeMoney}</td>
 
-                                        {contest.status === 'pending' &&
-                                            <>
-                                                <td className='flex flex-row gap-2'>
-                                                    <Link to={`/dashboard/edit-cotest/${contest?._id}`} className='btn btn-xs btn-primary'>
-                                                        <FaRegEdit size={14} />
-                                                    </Link>
+                                        <td className='flex flex-row gap-2'>
+                                            <Link disabled={contest.status !== 'pending'} to={`/dashboard/edit-cotest/${contest?._id}`} className='btn btn-xs btn-primary'>
+                                                <FaRegEdit size={14} />
+                                            </Link>
 
-                                                    <button onClick={() => handleDeleteContest(contest._id)} className='btn btn-xs btn-error'>
-                                                        <RiDeleteBinLine size={14} />
-                                                    </button>
-                                                </td>
-                                            </>
-                                        }
+                                            <button disabled={contest.status !== 'pending'} onClick={() => handleDeleteContest(contest._id)} className='btn btn-xs btn-error'>
+                                                <RiDeleteBinLine size={14} />
+                                            </button>
+                                        </td>
                                     </tr>
                                 )
                             }
-
 
                         </tbody>
                     </table>
