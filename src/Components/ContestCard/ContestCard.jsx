@@ -9,7 +9,7 @@ const ContestCard = () => {
     return (
         <div>
             {/* Card Container */}
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 my-5 gap-5 md:my-20'>
+            <div>
 
                 {/* Card */}
                 <div className='bg-base-100 rounded-t-lg'>
