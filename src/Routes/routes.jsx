@@ -12,6 +12,7 @@ import EditContest from "../Pages/Dashboard/EditContest/EditContest";
 import ManageUser from "../Pages/Dashboard/AdminPage/ManageUser/ManageUser";
 import ManageContest from "../Pages/Dashboard/AdminPage/ManageContest/ManageContest";
 import AllContest from "../Pages/AllContest/AllContest";
+import ContestDetails from "../Pages/ContestDetails/ContestDetails";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,11 @@ const router = createBrowserRouter([
       {
         path: '/all-contest',
         element: <AllContest/>
+      },
+
+      {
+        path: '/contest/details/:detailsId',
+        element: <ContestDetails/>         
       }
     ]
   },

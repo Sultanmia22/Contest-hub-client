@@ -63,7 +63,7 @@ const AllContest = () => {
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 my-5 gap-5 md:my-20'>
                 {
                     contests.map((contest, index) =>
-                        <ContestCard />
+                        <ContestCard key={index} contest={contest} />
                     )
                 }
             </div>
