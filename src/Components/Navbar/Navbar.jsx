@@ -27,7 +27,7 @@ const Navbar = () => {
 
     const links = <>
         <li><NavLink to='/'>Home</NavLink></li>
-        <li><NavLink to='dami1'>All Contest</NavLink></li>
+        <li><NavLink to='/all-contest'>All Contest</NavLink></li>
         <li><NavLink to='dami1'>About</NavLink></li>
     </>
 
@@ -40,7 +40,7 @@ const Navbar = () => {
                     </div>
                     <ul
                         tabIndex="-1"
-                        className=" font-medium text-primary space-y-2 dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                        className=" font-medium text-[#FFFFFF] space-y-2 dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                         {
                             links
                         }
@@ -55,13 +55,13 @@ const Navbar = () => {
                 </div>
                 <a className=" text-xl">
                     <div className='flex items-center gap-2'>
-                        <GoTrophy size={24} className='text-primary font-bold' />
-                        <h2 className='text-xl md:2xl font-semibold md:font-bold text-primary'>Contest<span className='text-yellow-400'>H</span>ub</h2>
+                        <GoTrophy size={24} className='text-[#FFFFFF] font-bold' />
+                        <h2 className='text-xl md:2xl font-semibold md:font-bold text-[#FFFFFF]'>Contest<span className='text-yellow-400'>H</span>ub</h2>
                     </div>
                 </a>
             </div>
             <div className="navbar-center hidden lg:flex">
-                <ul className=" menu-horizontal space-x-6 font-medium text-primary px-1">
+                <ul className=" menu-horizontal space-x-6 font-medium text-[#FFFFFF] px-1">
                     {
                         links
                     }
@@ -76,7 +76,7 @@ const Navbar = () => {
 
                         {/* sun icon */}
                         <svg
-                            className="swap-off h-10 w-10 fill-current text-primary"
+                            className="swap-off h-10 w-10 fill-current text-[#FFFFFF]"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24">
                             <path
@@ -85,7 +85,7 @@ const Navbar = () => {
 
                         {/* moon icon */}
                         <svg
-                            className="swap-on h-10 w-10 fill-current text-primary"
+                            className="swap-on h-10 w-10 fill-current text-[#FFFFFF]"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24">
                             <path
@@ -108,8 +108,8 @@ const Navbar = () => {
                                         insetInlineEnd: "0"
                                     } /* as React.CSSProperties */}>
 
-                                    <li className='text-primary text-[16px] font-semibold'> {user?.displayName} </li>
-                                    <Link to='/dashboard' className='text-primary text-[16px] font-semibold'>Dashboard</Link>
+                                    <li className='text-[#FFFFFF] text-[16px] font-semibold'> {user?.displayName} </li>
+                                    <Link to='/dashboard' className='text-[#FFFFFF] text-[16px] font-semibold'>Dashboard</Link>
 
                                     <div className='lg:hidden flex '>
                                         <label className="swap swap-rotate">
@@ -118,7 +118,7 @@ const Navbar = () => {
 
                                             {/* sun icon */}
                                             <svg
-                                                className="swap-off h-10 w-10 fill-current text-primary"
+                                                className="swap-off h-10 w-10 fill-current text-[#FFFFFF]"
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 24 24">
                                                 <path
@@ -127,7 +127,7 @@ const Navbar = () => {
 
                                             {/* moon icon */}
                                             <svg
-                                                className="swap-on h-10 w-10 fill-current text-primary"
+                                                className="swap-on h-10 w-10 fill-current text-[#FFFFFF]"
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 24 24">
                                                 <path

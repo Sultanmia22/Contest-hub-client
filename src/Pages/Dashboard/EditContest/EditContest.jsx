@@ -102,7 +102,7 @@ const EditContest = () => {
                             {...register('contestImage',)}
                             className="file-input w-full border border-secondary focus:border-0"
                         />
-                        <div className='w-full md:h-[200px]'> <img src={contestImage} alt="" /> </div>
+                        <div className='w-full md:h-[200px]'> <img src={contestImage} alt="" className='w-full md:h-[200px]' /> </div>
 
 
                         {/* Entry Price */}
