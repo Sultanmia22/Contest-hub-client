@@ -84,7 +84,7 @@ const ContestDetails = () => {
                             <p> <LuAward size={30} className='mx-auto' /> </p>
                             <p className='text-2xl md:text-5xl font-bold'>Grand Prize</p>
                         </div>
-                        <p className='text-center text-3xl font-bold'>${detailsContest?.entryPrice}</p>
+                        <p className='text-center text-3xl font-bold'>${detailsContest?.prizeMoney}</p>
                     </div>
                     <p className='text-center text-white'>Plus mentorship opportunities <br /> with industry leaders!</p>
                 </div>

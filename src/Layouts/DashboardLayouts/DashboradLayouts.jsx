@@ -20,11 +20,11 @@ const DashboradLayouts = () => {
       <div className="drawer-content">
         {/* Navbar */}
         <nav className="navbar w-full bg-secondary">
-          <label htmlFor="my-drawer-4" aria-label="open sidebar" className="btn btn-square btn-ghost">
+          <label htmlFor="my-drawer-4" aria-label="open sidebar" className="btn btn-square btn-ghost hover:bg-primary">
             {/* Sidebar toggle icon */}
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4"><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path><path d="M9 4v16"></path><path d="M14 10l2 2l-2 2"></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4 text-[#FFFFFF] "><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path><path d="M9 4v16"></path><path d="M14 10l2 2l-2 2"></path></svg>
           </label>
-          <div className="px-4 text-primary font-semibold">Navbar Title</div>
+          <div className="px-4 font-medium text-[#FFFFFF]">Dashboard</div>
         </nav>
         {/* OUTLET */}
         <div className='bg-[#D1F5F3] dark:bg-gray-800 min-h-screen '>
@@ -33,7 +33,7 @@ const DashboradLayouts = () => {
         </div>
       </div>
 
-      <div className="drawer-side is-drawer-close:overflow-visible text-xl font-medium text-primary">
+      <div className="drawer-side is-drawer-close:overflow-visible text-xl font-medium  text-[#FFFFFF] ">
         <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay"></label>
         <div className="flex min-h-full flex-col items-start bg-secondary is-drawer-close:w-14 is-drawer-open:w-64 border-r-2 border-primary">
           {/* Sidebar content here */}
@@ -63,7 +63,7 @@ const DashboradLayouts = () => {
               <>
                 <li>
                   <NavLink to='my_participated_contests' className={({ isActive }) =>
-                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] font-medium text-[#FFFFFF] " : ""
                     }`
                   } data-tip="My Participated Contests">
                     {/* Add Contest */}
@@ -74,7 +74,7 @@ const DashboradLayouts = () => {
 
                 <li>
                   <NavLink to='my_winning_contests' className={({ isActive }) =>
-                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] font-medium text-[#FFFFFF] " : ""
                     }`
                   } data-tip="My Winning Contests">
                     {/* Add Contest */}
@@ -85,7 +85,7 @@ const DashboradLayouts = () => {
 
                 <li>
                   <NavLink to='user-profile' className={({ isActive }) =>
-                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] font-medium text-[#FFFFFF] " : ""
                     }`
                   } data-tip="My Profile">
                     {/* Add Contest */}
@@ -113,7 +113,7 @@ const DashboradLayouts = () => {
               <>
                 <li>
                   <NavLink to='add-contest' className={({ isActive }) =>
-                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] font-medium text-[#FFFFFF] " : ""
                     }`
                   } data-tip="Add Contest">
                     {/* Add Contest */}
@@ -124,7 +124,7 @@ const DashboradLayouts = () => {
 
                 <li>
                   <NavLink to='my-contest' className={({ isActive }) =>
-                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] font-medium text-[#FFFFFF] " : ""
                     }`
                   } data-tip="My Created Contests">
                     {/* My Created Contests */}
@@ -135,7 +135,7 @@ const DashboradLayouts = () => {
 
                 <li>
                   <NavLink to='submitted-task' className={({ isActive }) =>
-                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] font-medium text-[#FFFFFF] " : ""
                     }`
                   } data-tip="Submitted Tasks">
                     {/* Submitted Tasks */}
@@ -159,7 +159,7 @@ const DashboradLayouts = () => {
               <>
                 <li>
                   <NavLink to='manage_users' className={({ isActive }) =>
-                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] font-medium text-[#FFFFFF] " : ""
                     }`
                   } data-tip="Manage Users">
                     {/* Add Contest */}
@@ -170,7 +170,7 @@ const DashboradLayouts = () => {
 
                 <li>
                   <NavLink to='manage-contests' className={({ isActive }) =>
-                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] text-white" : ""
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? "bg-[#0a3d62] font-medium text-[#FFFFFF] " : ""
                     }`
                   } data-tip="Manage Contest">
                     {/* Add Contest */}
