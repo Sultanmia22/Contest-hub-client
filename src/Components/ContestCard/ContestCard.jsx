@@ -37,7 +37,7 @@ const ContestCard = ({ contest }) => {
                                 <p className='text-gray-700  font-medium'>{
                                     Math.max(
                                         0,
-                                        Math.ceil((new Date(contest.deadline) - new Date()) / (1000 * 60 * 60 * 24)))}
+                                        Math.floor((new Date(contest.deadline) - new Date()) / (1000 * 60 * 60 * 24)))}
                                     days
                                 </p>
                             </div>

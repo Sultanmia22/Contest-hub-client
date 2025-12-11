@@ -23,6 +23,11 @@ const AddContest = () => {
         try {
             const imageData = data.contestImage[0]
             const imageURL = await uploadImage(imageData)
+            const taskInstruction = data.taskInstruction
+            .split('\n')
+            .map(line => line.trim()) 
+            
+            
 
             const addContestInfo = {
                 contestName: data.contestName,
@@ -31,8 +36,8 @@ const AddContest = () => {
                 prizeMoney: data.prizeMoney,
                 contestType: data.contestType,
                 description: data.description,
-                taskInstruction: data.taskInstruction,
-                deadline: data.deadline,
+                taskInstruction: taskInstruction,
+                deadline: new Date(data.deadline),
                 creatorEmail: user?.email,
                 creator:user?.displayName,
             }
