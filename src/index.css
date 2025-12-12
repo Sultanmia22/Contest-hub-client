@@ -7,7 +7,7 @@
   default: true;
 
   --color-primary: #0a3d62;
-  --color-secondary: #3EBFBB;
+  --color-secondary: #06b6d4;
   --color-accent: #3EBFBB;
 }
 
@@ -16,7 +16,7 @@
   name: "dark";
 
   --color-primary: #145C8C;
-  --color-secondary: #0FB2B5;
+  --color-secondary: #0891b2;
   --color-accent: #0FB2B5;
 }
 
