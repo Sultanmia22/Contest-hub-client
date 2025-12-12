@@ -15,6 +15,9 @@ import AllContest from "../Pages/AllContest/AllContest";
 import ContestDetails from "../Pages/ContestDetails/ContestDetails";
 import MyParticipated from "../Pages/Dashboard/UserPage/MyParticipated/MyParticipated";
 import WinningContest from "../Pages/Dashboard/UserPage/WinningContest/WinningContest";
+import AdminRoutes from "./AdminRoutes";
+import CreatorRoutes from "./CreatorRoutes";
+import PrivetRoutes from "./PrivetRoutes";
 
 const router = createBrowserRouter([
   {
@@ -61,37 +64,51 @@ const router = createBrowserRouter([
     children:[
       {
         path: 'add-contest',
-        element: <AddContest/>
+        element: <CreatorRoutes>
+          <AddContest/>
+        </CreatorRoutes>
       },
 
       {
         path: 'my-contest',
-        element: <MyContest/>
+        element: <CreatorRoutes>
+          <MyContest/>
+        </CreatorRoutes>
       },
 
       {
         path: '/dashboard/edit-cotest/:id',
-        element: <EditContest/>
+        element: <CreatorRoutes>
+          <EditContest/>
+        </CreatorRoutes>
       },
 
       {
         path: 'manage_users',
-        element: <ManageUser/>
+        element: <AdminRoutes>
+          <ManageUser/>
+        </AdminRoutes>
       },
 
       {
         path: 'manage-contests',
-        element: <ManageContest/>
+        element: <AdminRoutes>
+          <ManageContest/>
+        </AdminRoutes>
       },
 
       {
         path: 'my_participated_contests',
-        element: <MyParticipated/>
+        element: <PrivetRoutes>
+          <MyParticipated/>
+        </PrivetRoutes>
       },
 
       {
         path: 'my_winning_contests',
-        element: <WinningContest/>
+        element: <PrivetRoutes>
+          <WinningContest/>
+        </PrivetRoutes>
       }
     ]
   }

@@ -1,7 +1,9 @@
 import React from 'react';
 import { GoGift, GoTrophy } from 'react-icons/go';
+import UseRole from '../../../../Hook/UseRole';
 
 const WinningContest = () => {
+  
     return (
         <div className='flow-root mx-5'>
             <div className=' my-5  rounded-xl space-y-2 '>
