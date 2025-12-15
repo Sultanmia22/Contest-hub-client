@@ -5,8 +5,22 @@ import { FaUserFriends } from 'react-icons/fa';
 import { LuAward } from 'react-icons/lu';
 import { useEffect, useRef, useState } from 'react';
 import { BiAward } from 'react-icons/bi';
+import useAuth from '../../Hook/useAuth';
+import { useForm } from 'react-hook-form';
 
 const ContestDetails = () => {
+    const { user } = useAuth()
+    const modalRef = useRef()
+    const { detailsId } = useParams();
+    const axiosSecure = useAxiosSecure();
+
+     const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm()
+
     const [timeLeft, setTimeLeft] = useState({
         days: 0,
         hours: 0,
@@ -15,11 +29,8 @@ const ContestDetails = () => {
         ended: false
     });
 
-    const modalRef = useRef()
-    const { detailsId } = useParams();
-    const axiosSecure = useAxiosSecure()
 
-
+    // GET DATA 
     const { data: detailsContest, isLoading } = useQuery({
         queryKey: ['details-contest', detailsId],
         queryFn: async () => {
@@ -28,7 +39,10 @@ const ContestDetails = () => {
         }
     })
 
-    // DEADLINE COUNTDOWN FUNCTION
+
+
+
+    // DEADLINE COUNTDOWN 
     useEffect(() => {
         const interval = setInterval(() => {
             if (!detailsContest?.deadline) return;
@@ -38,7 +52,7 @@ const ContestDetails = () => {
             const totalTimeLeft = countDownDate - currentDate;
 
             if (totalTimeLeft <= 0) {
-                setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, ended: false })
+                setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, ended: true })
                 return clearInterval(interval)
             }
 
@@ -47,11 +61,11 @@ const ContestDetails = () => {
             const minutes = Math.floor((totalTimeLeft % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((totalTimeLeft % (1000 * 60)) / 1000);
 
-            setTimeLeft({ days, hours, minutes, seconds, ended: true })
+            setTimeLeft({ days, hours, minutes, seconds, ended: false })
         }, 1000)
+        return () => clearInterval(interval)
 
-
-    }, [detailsContest?.deadline, setTimeLeft, timeLeft]);
+    }, [detailsContest?.deadline, setTimeLeft]);
 
 
 
@@ -60,9 +74,42 @@ const ContestDetails = () => {
         modalRef.current.showModal()
     }
 
+    // HANDLE REGISTER AND PAYMNET
+    const handleRegisterPayment = async () => {
+        const paymentInfo = {
+            contestId: detailsContest?._id,
+            creatorEmail: detailsContest?.creatorEmail,
+            perticipantEmail: user?.email,
+            entryPrice: detailsContest?.entryPrice,
+            constestName: detailsContest?.contestName,
+            contestImage: detailsContest?.contestImage,
+            createdAt: new Date()
+        }
 
+        const result = await axiosSecure.post('/create-checkout-session', paymentInfo)
+        window.location.assign(result.data.url)
 
+    }
 
+    // get paid status
+    const { data: paid } = useQuery({
+        queryKey: ['status', detailsContest?._id, user?.email],
+        queryFn: async () => {
+            const result = await axiosSecure.get(`/payment-status?contestId=${detailsContest?._id}&perticipantEmail=${user?.email}`);
+            return result.data
+        },
+        enabled: !!detailsContest?._id && !!user?.email,
+    });
+
+    //    console.log(paid)
+
+    // Store task info i perticipentCollection
+    const handleStoreTaskInfo = async (data) => {
+        const submitedInfo = data.textArea.split('\n')
+        
+        const result = await axiosSecure.post(`/submit-task?contestId=${detailsContest?._id}&perticipantEmail=${user?.email}`,{submitedInfo});
+        // console.log(result.data)
+    }
 
     return (
         <div className='flow-root'>
@@ -91,7 +138,7 @@ const ContestDetails = () => {
 
                 {/* SUBMISSION DEADLINE SECTION */}
                 {
-                    !timeLeft.ended ? <div className='md:w-[800px] bg-red-400 p-10 mx-auto my-10 rounded-xl'><p className='text-white text-2xl md:text-5xl font-bold text-center'>Contest Ended</p></div> :
+                    timeLeft.ended ? <div className='md:w-[800px] bg-red-400 p-10 mx-auto my-10 rounded-xl'><p className='text-white text-2xl md:text-5xl font-bold text-center'>Contest Ended</p></div> :
                         <div className='py-20'>
                             <h2 className='text-xl md:text-5xl font-bold text-center text-primary dark:text-white mb-4'> Submission Deadline </h2>
                             <div className='bg-primary px-5 py-5 md:px-20 md:py-20 shadow grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-5 rounded-xl'>
@@ -138,10 +185,13 @@ const ContestDetails = () => {
 
                 {/* REGISTER AND SUBMIT SECTION */}
                 <div className="flex justify-center gap-4 mt-8">
-                    <button disabled={!timeLeft.ended} onClick={handelSubmitTaskModal} className="px-6 py-3 bg-[#1AA6B7] hover:bg-[#178a99] text-white rounded-xl shadow-md font-semibold">
-                        Submit Task
-                    </button>
-                    <button disabled={!timeLeft.ended} className="px-6 py-3 bg-[#073B63] hover:bg-[#052b48] text-white rounded-xl shadow-md font-semibold">
+                    {
+                        paid?.paid === true &&
+                        <button disabled={timeLeft.ended} onClick={handelSubmitTaskModal} className="px-6 py-3 bg-[#1AA6B7] hover:bg-[#178a99] text-white rounded-xl shadow-md font-semibold">
+                            Submit Task
+                        </button>
+                    }
+                    <button onClick={handleRegisterPayment} disabled={timeLeft.ended} className="px-6 py-3 bg-[#073B63] hover:bg-[#052b48] text-white rounded-xl shadow-md font-semibold">
                         Register
                     </button>
                 </div>
@@ -153,13 +203,18 @@ const ContestDetails = () => {
 
             <dialog ref={modalRef} className="modal modal-bottom sm:modal-middle">
                 <div className="modal-box">
-                    <fieldset>
-                        <textarea className='textarea w-full' placeholder='Provide your submission (Google Drive link, GitHub link, or details)...'></textarea>
-                    </fieldset>
+                    <form onSubmit={handleSubmit(handleStoreTaskInfo)}>
+                        <fieldset>
+                            <textarea {...register('textArea')} className='textarea w-full' placeholder='Provide your submission (Google Drive link, GitHub link, or details)...'></textarea>
+                        </fieldset>
+                       <div className='py-2'>
+                         <button className='btn btn-primary'>Submit</button>
+                       </div>
+                    </form>
                     <div className="modal-action">
+                        
                         <form className='flex gap-2 items-center' method="dialog">
                             {/* if there is a button in form, it will close the modal */}
-                            <button className='btn btn-primary'>Submit</button>
                             <button className="btn">Close</button>
                         </form>
                     </div>

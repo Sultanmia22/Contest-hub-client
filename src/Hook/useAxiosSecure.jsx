@@ -14,7 +14,7 @@ const useAxiosSecure = () => {
     useEffect(() => {
         // Add request interceptor
         const requestInterceptor = axiosInstance.interceptors.request.use(config => {
-            config.headers.Authorization = `Bearer ${user.accessToken}`
+            config.headers.Authorization = `Bearer ${user?.accessToken}`
             return config
         }
         )
@@ -26,7 +26,7 @@ const useAxiosSecure = () => {
                 if (err?.response?.status === 401 || err?.response?.status === 403) {
                     userSignOut()
                         .then(() => {
-                            console.log('Logged out successfully.')
+                            // console.log('Logged out successfully.')
                         })
                         .catch(console.error)
                     navigate('/login')

@@ -26,14 +26,14 @@ const Register = () => {
             const email = data.email;
             const password = data.password;
             const imageData = data.image[0]
-            console.log(imageData)
+            // console.log(imageData)
 
             const result = await createUser(email, password)
             const user = result.user;
 
             //uploadImage by imagebb 
             const imageURL = await uploadImage(imageData)
-            console.log(imageURL)
+            // console.log(imageURL)
 
             //update profile 
             const profileInfo = {
@@ -54,7 +54,7 @@ const Register = () => {
             navigate('/')
         }
         catch (er) {
-            console.log(er)
+            // console.log(er)
         }
 
     }

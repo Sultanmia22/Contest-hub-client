@@ -46,7 +46,7 @@ const AuthProvider = ({children}) => {
         }
     },[])
 
-    console.log(user)
+    console.log(user?.email)
 
     const authInfo = {
         createUser,

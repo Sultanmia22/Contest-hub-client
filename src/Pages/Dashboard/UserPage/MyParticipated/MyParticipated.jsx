@@ -1,6 +1,24 @@
 import React from 'react';
+import useAxiosSecure from '../../../../Hook/useAxiosSecure';
+import useAuth from '../../../../Hook/useAuth';
+import { useQuery } from '@tanstack/react-query';
 
 const MyParticipated = () => {
+
+    const axiosSecure = useAxiosSecure();
+    const { user } = useAuth()
+
+    // GET MY PERTICIPANT CONTEST 
+    const { data: perticipantContest = [], isLoading, refetch } = useQuery({
+        queryKey: ['my-perticipantInfo', user?.email],
+        queryFn: async () => {
+            const result = await axiosSecure.get(`/my-perticipantContest?perticipantEmail=${user?.email}`);
+            return result.data
+        }
+    })
+
+    console.log(perticipantContest)
+
     return (
         <div className='flow-root'>
             <div className='bg-gradient-to-r from-[#003B73] to-[#0074B7] my-5 mx-5 p-10 rounded-xl space-y-2 '>
@@ -25,19 +43,26 @@ const MyParticipated = () => {
                                     <th>Status</th>
                                     <th>Participants</th>
                                     <th>Prize</th>
-                                    <th>Action</th>
+                                    
                                 </tr>
                             </thead>
 
                             <tbody>
-                                <tr className='bg-base-100 text-primary dark:text-white font-medium text-sm '>
-                                    <th>blank</th>
-                                    <td>blank</td>
-                                    <td>blank</td>
-                                    <td>blank</td>
-                                    <td>blank</td>
-                                    <td>blank</td>
-                                </tr>
+                                {
+                                    perticipantContest?.map((contest, index) =>
+                                        <tr className='bg-base-100 text-primary dark:text-white font-medium text-sm '>
+                                            <th>{index +1}</th>
+                                            <td>{contest.contestName}</td>
+                                            <td>{contest.perticipants.map(c => 
+                                                c.status
+                                            )}</td>
+                                            <td>{contest.participantsCount}</td>
+                                            <td>${contest.prizeMoney}</td>
+                                            
+                                        </tr>
+                                    )
+                                }
+
                             </tbody>
                         </table>
                     </div>

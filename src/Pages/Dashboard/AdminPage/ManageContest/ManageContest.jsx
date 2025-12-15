@@ -22,7 +22,7 @@ const ManageContest = () => {
             toast.success(`${status.status} successfully`)
         }
         catch (er) {
-            console.log(er)
+            // console.log(er)
         }
     }
 
@@ -34,7 +34,7 @@ const ManageContest = () => {
             refetch()
         }
         catch(er){
-            console.log(er);
+            // console.log(er);
         }
     }
 

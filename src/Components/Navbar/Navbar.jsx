@@ -26,7 +26,8 @@ const Navbar = () => {
     }
 
     const links = <>
-        <li><NavLink to='/'>Home</NavLink></li>
+        <li><NavLink className={({ isActive }) =>
+    isActive ? "border-b-2 border-primary text-yellow-300" : ""} to='/'>Home</NavLink></li>
         <li><NavLink to='/all-contest'>All Contest</NavLink></li>
         <li><NavLink to='dami1'>About</NavLink></li>
     </>
@@ -91,7 +92,7 @@ const Navbar = () => {
 
                         {/* sun icon */}
                         <svg
-                            className="swap-off h-10 w-10 fill-current text-[#FFFFFF]"
+                            className="swap-off h-10 w-10 fill-current text-yellow-400"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24">
                             <path
@@ -100,7 +101,7 @@ const Navbar = () => {
 
                         {/* moon icon */}
                         <svg
-                            className="swap-on h-10 w-10 fill-current text-[#FFFFFF]"
+                            className="swap-on h-10 w-10 fill-current text-primary"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24">
                             <path
@@ -138,10 +139,10 @@ const Navbar = () => {
 
                                         <a
 
-                                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg dark:text-secondary"
+                                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg dark:text-secondary md:hidden"
                                         >
                                             {/* theme section */}
-                                            <div className='hidden lg:flex '>
+                                            <div className='md:hidden'>
                                                 <label className="swap swap-rotate">
                                                     {/* this hidden checkbox controls the state */}
                                                     <input onChange={(e) => handleTheme(e.target.checked)} type="checkbox" className="theme-controller" value="synthwave" />

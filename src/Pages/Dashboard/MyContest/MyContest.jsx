@@ -28,7 +28,7 @@ const MyContest = () => {
 
         }
         catch (er) {
-            console.log(er)
+            // console.log(er)
         }
     }
 

@@ -6,7 +6,7 @@ import { MdOutlineDateRange } from 'react-icons/md';
 import { Link } from 'react-router';
 
 const ContestCard = ({ contest }) => {
-    console.log(contest)
+    // console.log(contest)
     return (
         <div>
             {/* Card Container */}
@@ -26,15 +26,15 @@ const ContestCard = ({ contest }) => {
                         <div className='flex flex-col justify-between gap-3'>
                             <div className='flex items-center gap-2'>
                                 <FaUserFriends className='text-primary ' />
-                                <p className='text-gray-700  font-medium'>{contest.participantsCount} Participants</p>
+                                <p className='text-gray-700 dark:text-white  font-medium'>{contest.participantsCount} Participants</p>
                             </div>
                             <div className='flex items-center gap-2'>
                                 <FiAward className='text-secondary ' />
-                                <p className='text-gray-700  font-medium'>Prize: ${contest.prizeMoney}</p>
+                                <p className='text-gray-700 dark:text-white  font-medium'>Prize: ${contest.prizeMoney}</p>
                             </div>
                             <div className='flex items-center gap-2'>
                                 <MdOutlineDateRange className='text-error ' />
-                                <p className='text-gray-700  font-medium'>{
+                                <p className='text-gray-700 dark:text-white  font-medium'>{
                                     Math.max(
                                         0,
                                         Math.floor((new Date(contest.deadline) - new Date()) / (1000 * 60 * 60 * 24)))}

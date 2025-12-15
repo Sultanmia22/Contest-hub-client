@@ -35,7 +35,7 @@ const AllContest = () => {
         setActiveTab(type.contestType)
     }
 
-    console.log(contestTypes)
+    // console.log(contestTypes)
 
 
     if (isLoading) {

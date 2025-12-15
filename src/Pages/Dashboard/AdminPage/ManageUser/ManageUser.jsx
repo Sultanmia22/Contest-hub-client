@@ -24,7 +24,7 @@ const ManageUser = () => {
              refetch()
         }
         catch(er){
-            console.log(er)
+            // console.log(er)
         }
     }
 
@@ -33,7 +33,7 @@ const ManageUser = () => {
     if (isLoading) {
         return <Loading />
     }
-    console.log(users)
+    // console.log(users)
     return (
         <div className='flow-root '>
             <div className='mx-4 my-4 md:m-10'>

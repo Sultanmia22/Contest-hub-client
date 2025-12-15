@@ -18,6 +18,8 @@ import WinningContest from "../Pages/Dashboard/UserPage/WinningContest/WinningCo
 import AdminRoutes from "./AdminRoutes";
 import CreatorRoutes from "./CreatorRoutes";
 import PrivetRoutes from "./PrivetRoutes";
+import SuccessPayment from "../Pages/Payment/SuccessPayment/SuccessPayment";
+import CancelPayment from "../Pages/Payment/CancelPayment/CancelPayment";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +40,16 @@ const router = createBrowserRouter([
       {
         path: '/contest/details/:detailsId',
         element: <ContestDetails/>         
+      },
+
+      {
+        path: '/payment-success',
+        element: <SuccessPayment/>
+      },
+
+      {
+        path: '/payment-cancel',
+        element: <CancelPayment/>
       }
     ]
   },

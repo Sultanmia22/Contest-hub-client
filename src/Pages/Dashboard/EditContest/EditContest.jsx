@@ -59,7 +59,7 @@ const EditContest = () => {
             navigate('/dashboard/my-contest')
         }
         catch (er) {
-            console.log(er)
+            // console.log(er)
         }
     }
 
