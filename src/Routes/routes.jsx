@@ -20,6 +20,7 @@ import CreatorRoutes from "./CreatorRoutes";
 import PrivetRoutes from "./PrivetRoutes";
 import SuccessPayment from "../Pages/Payment/SuccessPayment/SuccessPayment";
 import CancelPayment from "../Pages/Payment/CancelPayment/CancelPayment";
+import SubmitedTask from "../Pages/Dashboard/SubmitedTaskPage/SubmitedTask";
 
 const router = createBrowserRouter([
   {
@@ -39,7 +40,9 @@ const router = createBrowserRouter([
 
       {
         path: '/contest/details/:detailsId',
-        element: <ContestDetails/>         
+        element: <PrivetRoutes>
+          <ContestDetails/>  
+        </PrivetRoutes>       
       },
 
       {
@@ -121,6 +124,11 @@ const router = createBrowserRouter([
         element: <PrivetRoutes>
           <WinningContest/>
         </PrivetRoutes>
+      },
+
+      {
+        path: 'submitted-task',
+        element: <SubmitedTask/>
       }
     ]
   }

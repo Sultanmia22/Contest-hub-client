@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { BiAward } from 'react-icons/bi';
 import useAuth from '../../Hook/useAuth';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 const ContestDetails = () => {
     const { user } = useAuth()
@@ -19,6 +20,7 @@ const ContestDetails = () => {
     handleSubmit,
     watch,
     formState: { errors },
+     reset,
   } = useForm()
 
     const [timeLeft, setTimeLeft] = useState({
@@ -80,6 +82,7 @@ const ContestDetails = () => {
             contestId: detailsContest?._id,
             creatorEmail: detailsContest?.creatorEmail,
             perticipantEmail: user?.email,
+            perticipantName: user?.displayName,
             entryPrice: detailsContest?.entryPrice,
             constestName: detailsContest?.contestName,
             contestImage: detailsContest?.contestImage,
@@ -105,10 +108,13 @@ const ContestDetails = () => {
 
     // Store task info i perticipentCollection
     const handleStoreTaskInfo = async (data) => {
-        const submitedInfo = data.textArea.split('\n')
-        
-        const result = await axiosSecure.post(`/submit-task?contestId=${detailsContest?._id}&perticipantEmail=${user?.email}`,{submitedInfo});
+        const submitLink = data.link;
+        const submitInfo = data.info;       
+        const result = await axiosSecure.post(`/submit-task?contestId=${detailsContest?._id}&perticipantEmail=${user?.email}`,{submitedInfo:submitInfo,submitLink:submitLink});
         // console.log(result.data)
+        reset()
+        toast.success('Task Submited Successfully')
+        modalRef.current.close();
     }
 
     return (
@@ -205,7 +211,8 @@ const ContestDetails = () => {
                 <div className="modal-box">
                     <form onSubmit={handleSubmit(handleStoreTaskInfo)}>
                         <fieldset>
-                            <textarea {...register('textArea')} className='textarea w-full' placeholder='Provide your submission (Google Drive link, GitHub link, or details)...'></textarea>
+                            <textarea {...register('link')} className='textarea w-full' placeholder='Provide your submission Google Drive link...'></textarea> <br /> <br />
+                            <textarea {...register('info')} className='textarea w-full' placeholder='Provide your submission Info'></textarea>
                         </fieldset>
                        <div className='py-2'>
                          <button className='btn btn-primary'>Submit</button>

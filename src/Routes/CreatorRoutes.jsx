@@ -1,6 +1,7 @@
 import React from 'react';
 import UseRole from '../Hook/UseRole';
 import { Navigate } from 'react-router';
+import Loading from '../Components/LoadingPage/Loading';
 
 const CreatorRoutes = ({children}) => {
     const { role, roleLoading } = UseRole()

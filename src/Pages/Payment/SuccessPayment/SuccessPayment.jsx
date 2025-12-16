@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import useAxiosSecure from '../../../Hook/useAxiosSecure';
 
 const SuccessPayment = () => {
