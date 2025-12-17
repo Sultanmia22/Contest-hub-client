@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 const SubmitedTask = () => {
     const { user } = useAuth()
     const axiosSecure = useAxiosSecure()
- 
+
     // get perticipant and task data
     const { data: taskContest = [], isLoading } = useQuery({
         queryKey: ['submitInfo', user?.email],
@@ -22,17 +22,17 @@ const SubmitedTask = () => {
     })
 
     // Handle Declare winner
-    const handleDeclare = async (id, email) => {
-        
-        const result = await axiosSecure.patch(`/declare-winner?contestId=${id}&creatorEmail=${email}`,{ perticipant:user?.email})
-        if(result.data.winnerDeclared === true){
+    const handleDeclare = async (id, email,perticipantEmail) => {
+
+        const result = await axiosSecure.patch(`/declare-winner?contestId=${id}&creatorEmail=${email}`, { perticipant:perticipantEmail})
+        if (result.data.winnerDeclared === true) {
             return toast.error('Winner Already Declared')
         }
 
         toast.success('Winner Declared Successfully!')
     }
 
-    // console.log(taskContest)
+    console.log(taskContest)
 
     if (isLoading) {
         return <Loading />
@@ -92,7 +92,7 @@ const SubmitedTask = () => {
                                         </div>
 
                                         <div className='flex justify-center items-center'>
-                                            <button onClick={() => handleDeclare(task?.contestId, task?.creatorEmail)} className='btn btn-primary text-white'>Declare Winner</button>
+                                            <button onClick={() => handleDeclare(task?.contestId, task?.creatorEmail, task?.perticipantEmail)} className='btn btn-primary text-white'>Declare Winner</button>
                                         </div>
 
 

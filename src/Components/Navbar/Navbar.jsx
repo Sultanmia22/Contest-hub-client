@@ -27,9 +27,11 @@ const Navbar = () => {
 
     const links = <>
         <li><NavLink className={({ isActive }) =>
-    isActive ? "border-b-2 border-primary text-yellow-300" : ""} to='/'>Home</NavLink></li>
-        <li><NavLink to='/all-contest'>All Contest</NavLink></li>
-        <li><NavLink to='dami1'>About</NavLink></li>
+            isActive ? "border-b-2 border-primary text-yellow-300" : ""} to='/'>Home</NavLink></li>
+        <li><NavLink className={({ isActive }) =>
+            isActive ? "border-b-2 border-primary text-yellow-300" : ""} to='/all-contest'>All Contest</NavLink></li>
+        <li><NavLink className={({ isActive }) =>
+            isActive ? "border-b-2 border-primary text-yellow-300" : ""} to='dami1'>About</NavLink></li>
     </>
 
 

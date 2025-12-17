@@ -21,6 +21,7 @@ import PrivetRoutes from "./PrivetRoutes";
 import SuccessPayment from "../Pages/Payment/SuccessPayment/SuccessPayment";
 import CancelPayment from "../Pages/Payment/CancelPayment/CancelPayment";
 import SubmitedTask from "../Pages/Dashboard/SubmitedTaskPage/SubmitedTask";
+import Profile from "../Pages/Dashboard/UserPage/Profile/Profile";
 
 const router = createBrowserRouter([
   {
@@ -53,7 +54,9 @@ const router = createBrowserRouter([
       {
         path: '/payment-cancel',
         element: <CancelPayment/>
-      }
+      },
+
+     
     ]
   },
 
@@ -129,6 +132,11 @@ const router = createBrowserRouter([
       {
         path: 'submitted-task',
         element: <SubmitedTask/>
+      },
+
+       {
+        path: 'user-profile',
+        element: <Profile/>
       }
     ]
   }
