@@ -34,8 +34,8 @@ const WinningContest = () => {
     return (
         <div className='flow-root mx-5'>
             <div className=' my-5  rounded-xl space-y-2 '>
-                <h2 className='text-2xl md:text-5xl text-gray-800 font-bold'>My Winning Contests</h2>
-                <p className='text-sm md:text-[18px] text-gray-700'>Celebrate your victories and showcase your design excellence across multiple competitions..</p>
+                <h2 className='text-2xl md:text-5xl text-gray-800 font-bold dark:text-gray-100'>My Winning Contests</h2>
+                <p className='text-sm md:text-[18px] text-gray-700 dark:text-gray-400'>Celebrate your victories and showcase your design excellence across multiple competitions..</p>
             </div>
 
 
@@ -61,7 +61,7 @@ const WinningContest = () => {
                 winningData.map((data, index) =>
 
                     <div className='my-5'>
-                        <div class="bg-white rounded-xl shadow-md p-4 flex flex-col md:flex-row gap-4">
+                        <div class="bg-base-100 rounded-xl shadow-md p-4 flex flex-col md:flex-row gap-4">
                             <img
                                 src={data?.contestImage}
                                 class="w-full md:w-32 h-40 md:h-32 rounded-lg object-cover"
@@ -69,12 +69,12 @@ const WinningContest = () => {
                             <div class="flex-1 flex flex-col justify-between">
 
                                 <div>
-                                    <h2 class="text-xl font-bold mb-1">{data?.contestName}</h2>
-                                    <span class="text-sm opacity-70  px-2 py-1 bg-green-300 rounded-full">{data?.contestType}</span>
+                                    <h2 class="text-xl font-bold mb-1 dark:text-white">{data?.contestName}</h2>
+                                    <span class="text-sm opacity-70  px-2 py-1 bg-green-300 rounded-full dark:text-gray-800">{data?.contestType}</span>
 
                                     <div class="flex items-center gap-2 mt-2 text-sm">
                                         <img src='https://i.ibb.co.com/Y4nSkysH/Sample-User-Icon.png'
-                                            class="w-6 h-6 rounded-full" />
+                                            className="w-6 h-6 rounded-full dark:bg-amber-200" />
                                         <span>By {data?.creator}</span>
                                     </div>
 
