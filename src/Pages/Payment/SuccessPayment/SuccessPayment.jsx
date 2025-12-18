@@ -54,7 +54,10 @@ const SuccessPayment = () => {
                         <h2 className='font-bold text-gray-600 dark:text-gray-200'>Date & Time</h2>
                         <span>{paymentInfo.createdAt}</span>
                     </div>
-
+                     
+                     <div>
+                        <Link to={`/contest/details/${paymentInfo.id}`} className='btn btn-primary text-white'>Back Deatils Page</Link>
+                     </div>
                 </div>
             </div>
         </div>

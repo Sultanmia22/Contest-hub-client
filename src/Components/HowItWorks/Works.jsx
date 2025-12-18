@@ -12,7 +12,7 @@ const Works = () => {
     }, [])
 
     return (
-        <div className='bg-primary px-4 md:px-0 py-4 md:py-30 rounded-xl'>
+        <div className='bg-primary px-4 md:px-0 py-4 md:py-30 rounded-xl mb-10 md:mb-20 '>
             <h2 className='text-2xl md:text-5xl font-bold text-center mb-2 md:mb-10 text-secondary'> How It Work </h2>
             <div className='grid grid-cols-1 gap-5'>
                 {

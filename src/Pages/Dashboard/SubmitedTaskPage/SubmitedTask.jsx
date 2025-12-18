@@ -9,7 +9,7 @@ import Loading from '../../../Components/LoadingPage/Loading';
 import { toast } from 'react-toastify';
 
 const SubmitedTask = () => {
-    const { user } = useAuth()
+    const { user,Loading } = useAuth()
     const axiosSecure = useAxiosSecure()
 
     // get perticipant and task data
@@ -34,7 +34,9 @@ const SubmitedTask = () => {
 
     console.log(taskContest)
 
-    if (isLoading) {
+
+
+    if (Loading) {
         return <Loading />
     }
 
@@ -50,13 +52,13 @@ const SubmitedTask = () => {
                     <p className='text-xl md:text-2xl font-medium pb-5 text-gray-600 dark:text-white'>Total Submission({taskContest?.length})</p>
                     {
                         taskContest?.map((task, index) =>
-                            <div className='mb-5'>
+                            <div key={index} className='mb-5'>
                                 <div className="collapse collapse-arrow bg-base-100 border border-base-300">
                                     <input type="checkbox" />
                                     <div className="collapse-title space-y-2">
                                         <h3 className='md:text-2xl font-medium'>{task?.perticipantName}</h3>
                                         <p className='text-gray-600 dark:text-white'>{task?.perticipantEmail}</p>
-                                        <p className='text-sm '>{task?.perticipantContent.submitedInfo}</p>
+                                        <p className='text-sm '>{task?.perticipantContent?.submitedInfo}</p>
                                     </div>
 
                                     <div className="collapse-content text-sm ">
@@ -82,7 +84,7 @@ const SubmitedTask = () => {
                                             <h2 className=' md:text-xl font-semibold'>Submitted Task</h2>
                                             <div className='p-4 border-2 border-gray-400 rounded-xl my-2 flex gap-1 items-center'>
                                                 <p><VscFileSymlinkFile /></p>
-                                                <p className='text-sm  font-medium text-gray-600 dark:text-gray-300'>{task?.perticipantContent.submitLink}</p>
+                                                <p className='text-sm  font-medium text-gray-600 dark:text-gray-300'>{task?.perticipantContent?.submitLink}</p>
                                             </div>
                                         </div>
 

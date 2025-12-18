@@ -22,6 +22,7 @@ import SuccessPayment from "../Pages/Payment/SuccessPayment/SuccessPayment";
 import CancelPayment from "../Pages/Payment/CancelPayment/CancelPayment";
 import SubmitedTask from "../Pages/Dashboard/SubmitedTaskPage/SubmitedTask";
 import Profile from "../Pages/Dashboard/UserPage/Profile/Profile";
+import Leaderboard from "../Pages/Leaderboard/Leaderboard";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
         element: <CancelPayment/>
       },
 
+      {
+        path: '/leaderboard',
+        element: <Leaderboard/>
+      }
      
     ]
   },
@@ -131,12 +136,16 @@ const router = createBrowserRouter([
 
       {
         path: 'submitted-task',
-        element: <SubmitedTask/>
+        element: <CreatorRoutes>
+          <SubmitedTask/>
+        </CreatorRoutes>
       },
 
        {
         path: 'user-profile',
-        element: <Profile/>
+        element: <PrivetRoutes>
+          <Profile/>
+        </PrivetRoutes>
       }
     ]
   }

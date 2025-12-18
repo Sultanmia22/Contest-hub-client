@@ -15,7 +15,7 @@ const ContestCard = ({ contest }) => {
                 {/* Card */}
                 <div className='bg-base-100 rounded-t-lg'>
                     <div className="card-image">
-                        <img src={contest.contestImage} alt="" className='rounded-t-lg h-60'/>
+                        <img src={contest.contestImage} alt="" className='rounded-t-lg h-60 w-full'/>
                     </div>
                     <div className="card-body">
                         <div>

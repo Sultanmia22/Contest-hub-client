@@ -31,6 +31,8 @@ const Navbar = () => {
         <li><NavLink className={({ isActive }) =>
             isActive ? "border-b-2 border-primary text-yellow-300" : ""} to='/all-contest'>All Contest</NavLink></li>
         <li><NavLink className={({ isActive }) =>
+            isActive ? "border-b-2 border-primary text-yellow-300" : ""} to='/leaderboard'>Leaderboard</NavLink></li>
+        <li><NavLink className={({ isActive }) =>
             isActive ? "border-b-2 border-primary text-yellow-300" : ""} to='dami1'>About</NavLink></li>
     </>
 
