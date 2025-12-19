@@ -104,7 +104,7 @@ const Profile = () => {
     }
 
     return (
-        <div className='flow-root mx-5'>
+        <div className='flow-root px-2 bg-cyan-700'>
             <div>
                 {/* title */}
                 <div className='my-5 space-y-2 text-center'>
@@ -113,12 +113,12 @@ const Profile = () => {
                 </div>
 
                 {/* Profile card */}
-                <div className='profile-card bg-base-100 shadow flex flex-col md:flex-row gap-5 md:w-6/11 mx-auto md:h-[500px] rounded-2xl'>
+                <div className='profile-card bg-base-100 shadow flex flex-col md:flex-row gap-5 md:w-6/11 md:mx-auto md:h-[500px] rounded-2xl'>
 
                     {/* Left side  */}
                     <div className='profile-left  md:w-[300px] bg-primary min-h-full flex flex-col justify-center items-center rounded-2xl md:rounded-none md:rounded-l-2xl py-10'>
                         <div className=''>
-                            <img src={user?.photoURL} alt="" className='w-30 h-30 mx-auto p-1 border-white border rounded-xl' />
+                            <img src={user?.photoURL} alt="" className='w-30 h-30 md:mx-auto p-1 border-white border rounded-xl' />
                         </div>
                         <div className='mt-4'>
                             <label className="btn bg-secondary text-white rounded-full">

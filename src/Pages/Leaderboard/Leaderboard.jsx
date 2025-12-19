@@ -16,7 +16,7 @@ const Leaderboard = () => {
 
     return (
         <div className='flow-root '>
-            <div className='bg-gray-900 px-30 mt-10 rounded-2xl py-10'>
+            <div className='  my-10 rounded-2xl py-10 min-h-[600px] '>
                 {/* title */}
                 <div className='text-center space-y-2'>
                     <h2 className='text-2xl md:text-5xl font-semibold text-white'>Leaderboard</h2>

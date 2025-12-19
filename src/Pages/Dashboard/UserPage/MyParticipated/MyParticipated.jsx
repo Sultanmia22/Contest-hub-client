@@ -20,7 +20,7 @@ const MyParticipated = () => {
     console.log(perticipantContest)
 
     return (
-        <div className='flow-root'>
+        <div className='flow-root '>
             <div className='bg-gradient-to-r from-[#003B73] to-[#0074B7] my-5 mx-5 p-10 rounded-xl space-y-2 '>
                 <h2 className='text-xl md:text-5xl text-white font-bold'>My Participated Contests</h2>
                 <p className='text-sm md:text-[18px] text-white'>Track all your contest participation, manage payments, and monitor your performance in real-time.</p>

@@ -1,6 +1,39 @@
+import { useState } from "react";
 import bannerImg from "../../assets/banner.png";
+import useAxiosSecure from "../../Hook/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 const Banner = () => {
+
+    const axiosSecure = useAxiosSecure()
+    const [searchText, setSearchText] = useState('')
+    const [types, setTypes] = useState('')
+    const [show, setShow] = useState(false)
+
+
+
+    const { data: searchContest = [] } = useQuery({
+        queryKey: ['searchContest', types],
+        queryFn: async () => {
+            const result = await axiosSecure.get(`/searchContest?type=${types}`);
+            return result.data
+        }
+    })
+
+    console.log(searchContest)
+
+    const handleSearch = async (text) => {
+        if(text === ''){
+            return toast.error('Please fill input field')
+        }
+        
+        setTypes(text)
+        setShow(true)
+        setSearchText('')
+    }
+
     return (
         <div>
             <div className="relative h-[250px] sm:h-[350px] md:h-[450px] lg:h-[600px] w-full pt-5">
@@ -34,10 +67,31 @@ const Banner = () => {
                                     <path d="m21 21-4.3-4.3"></path>
                                 </g>
                             </svg>
-                            <input type="text" required placeholder="Search works by contest" className="placeholder:text-gray-500" />
+                            <input type="text" value={searchText} onChange={(e) => setSearchText(e.target.value)} required placeholder="Search works by contest" className="placeholder:text-gray-500 text-primary" />
                         </label>
-                        <button className="btn btn-primary"> Search </button>
+                        <button onClick={() => handleSearch(searchText)} className="btn btn-primary"> Search </button>
                     </div>
+
+                    {
+                        show === true &&
+                        <div className="mt-20 bg-secondary md:p-5 rounded-xl grid grid-cols-1 gap-2">
+                            {
+                                searchContest?.map(contest =>
+                                    <div className="bg-primary md:p-4 shadow rounded-md">
+                                        <Link to={`/contest/details/${contest?._id}`} className="flex items-center gap-3">
+                                            <div> <img src={contest?.contestImage} alt="" className="w-12 h-12 rounded-xl" /> </div>
+                                            <div className="text-start">
+                                                <h2 className="text-sm">{contest?.contestName}</h2>
+                                                <span className="text-sm text-primary font-medium text-start px-1 py-0.5 bg-green-300 rounded-full">Video Editing</span>
+                                            </div>
+                                        </Link>
+                                    </div>
+                                )
+                            }
+
+                        </div>
+                    }
+
                 </div>
 
             </div>

@@ -23,6 +23,8 @@ import CancelPayment from "../Pages/Payment/CancelPayment/CancelPayment";
 import SubmitedTask from "../Pages/Dashboard/SubmitedTaskPage/SubmitedTask";
 import Profile from "../Pages/Dashboard/UserPage/Profile/Profile";
 import Leaderboard from "../Pages/Leaderboard/Leaderboard";
+import About from "../Pages/About/About";
+import Contact from "../Pages/Contact/Contact";
 
 const router = createBrowserRouter([
   {
@@ -37,7 +39,9 @@ const router = createBrowserRouter([
 
       {
         path: '/all-contest',
-        element: <AllContest/>
+        element: <PrivetRoutes>
+           <AllContest/>
+        </PrivetRoutes>
       },
 
       {
@@ -59,7 +63,19 @@ const router = createBrowserRouter([
 
       {
         path: '/leaderboard',
-        element: <Leaderboard/>
+        element: <PrivetRoutes>
+          <Leaderboard/>
+        </PrivetRoutes>
+      },
+
+      {
+        path: '/about',
+        element: <About/>
+      },
+
+      {
+        path: '/contact',
+        element: <Contact/>
       }
      
     ]
