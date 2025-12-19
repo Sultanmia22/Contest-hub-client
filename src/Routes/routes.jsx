@@ -25,6 +25,7 @@ import Profile from "../Pages/Dashboard/UserPage/Profile/Profile";
 import Leaderboard from "../Pages/Leaderboard/Leaderboard";
 import About from "../Pages/About/About";
 import Contact from "../Pages/Contact/Contact";
+import DaynamicNavigate from "../Pages/Dashboard/DaynamicNavigate/DaynamicNavigate";
 
 const router = createBrowserRouter([
   {
@@ -106,6 +107,11 @@ const router = createBrowserRouter([
         element: <CreatorRoutes>
           <AddContest/>
         </CreatorRoutes>
+      },
+
+      {
+        path: '/dashboard/daynamicNavigate',
+        element: <DaynamicNavigate/>
       },
 
       {

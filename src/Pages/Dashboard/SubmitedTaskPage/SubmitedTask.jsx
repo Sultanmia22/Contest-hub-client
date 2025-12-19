@@ -44,12 +44,12 @@ const SubmitedTask = () => {
         <div className='flow-root'>
             <div className='mx-4 my-4 md:m-10'>
                 <div className='border-b-2 border-gray-500 pb-2 space-y-1'>
-                    <h2 className='text-2xl md:text-4xl font-bold text-gray-800 dark:text-white'>Submitted Tasks</h2>
-                    <p className='text-gray-600 dark:text-white'>Manage contest submissions and declare winners</p>
+                    <h2 className='text-2xl md:text-4xl font-bold text-gray-200 dark:text-white'>Submitted Tasks</h2>
+                    <p className='text-gray-200 dark:text-white'>Manage contest submissions and declare winners</p>
                 </div>
 
                 <div className='my-5'>
-                    <p className='text-xl md:text-2xl font-medium pb-5 text-gray-600 dark:text-white'>Total Submission({taskContest?.length})</p>
+                    <p className='text-xl md:text-2xl font-medium pb-5 text-gray-200 dark:text-white'>Total Submission({taskContest?.length})</p>
                     {
                         taskContest?.map((task, index) =>
                             <div key={index} className='mb-5'>

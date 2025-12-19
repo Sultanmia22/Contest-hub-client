@@ -3,7 +3,7 @@ import { FaClock, FaEnvelope, FaFacebook, FaInstagram, FaLinkedin, FaMapMarkerAl
 
 const Contact = () => {
     return (
-       <div className="min-h-screen bg-gray-50 my-5">
+       <div className="min-h-screen bg-primary my-5">
     
 
       {/* Hero Section */}
@@ -21,7 +21,7 @@ const Contact = () => {
             
             {/* Contact Form */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-lg shadow-md p-8">
+              <div className="bg-secondary rounded-lg shadow-md p-8">
                 <h3 className="text-2xl font-bold text-gray-800 mb-6">Send us a Message</h3>
                 
                 <form>
