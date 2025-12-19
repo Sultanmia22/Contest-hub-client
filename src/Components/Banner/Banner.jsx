@@ -25,14 +25,18 @@ const Banner = () => {
     console.log(searchContest)
 
     const handleSearch = async (text) => {
-        if(text === ''){
+        if (text === '') {
             return toast.error('Please fill input field')
         }
-        
+
+
+
         setTypes(text)
         setShow(true)
         setSearchText('')
     }
+
+   
 
     return (
         <div>
@@ -73,8 +77,10 @@ const Banner = () => {
                     </div>
 
                     {
-                        show === true &&
-                        <div className="mt-20 bg-secondary md:p-5 rounded-xl grid grid-cols-1 gap-2">
+                        show === true && searchContest.length > 0 ?  
+
+
+                        <div className="mt-20 bg-secondary md:p-5 rounded-xl grid grid-cols-1 gap-2 z-30">
                             {
                                 searchContest?.map(contest =>
                                     <div className="bg-primary md:p-4 shadow rounded-md">
@@ -90,6 +96,9 @@ const Banner = () => {
                             }
 
                         </div>
+                        :
+
+                        ''
                     }
 
                 </div>

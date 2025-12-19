@@ -83,12 +83,12 @@ const Register = () => {
 
                             {/* Email Field */}
                             <label className="label">Email</label>
-                            <input border-secondary type="email" {...register('email')} className="input border-secondary" placeholder="Email" />
-
+                            <input border-secondary type="email" {...register('email',{ required: 'Email is required', pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: 'please enter valid email address' } })} className="input border-secondary" placeholder="Email" />
+                            {errors.email && <p className='text-red-600 text-sm'> {errors.email.message} </p>}
 
                             <label className="label">Password</label>
-                            <input border-secondary type="password" {...register('password')} className="input border-secondary" placeholder="Password" />
-
+                            <input border-secondary type="password" {...register('password',{ required: 'Password is Required', pattern: { value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, message: 'Please enter a valid Password' } })} className="input border-secondary" placeholder="Password" />
+                            {errors.password && <p className='text-red-600 text-sm'> {errors.password.message} </p>}
                             <div><a className="link link-hover">Forgot password?</a></div>
                             <button className="btn btn-primary mt-4">Register</button>
 
