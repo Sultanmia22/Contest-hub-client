@@ -5,22 +5,22 @@ import Loading from '../../../Components/LoadingPage/Loading';
 import { Navigate } from 'react-router';
 
 const DaynamicNavigate = () => {
-    const {loading} = useAuth()
-    const {role,roleLoading} = UseRole()
+    const { loading } = useAuth()
+    const { role, roleLoading } = UseRole()
     console.log(role)
-    if(loading || roleLoading){
+    if (loading || roleLoading) {
         return <Loading></Loading>
     }
 
-    if(role === 'creator'){
+    if (role === 'creator') {
         return <Navigate to='/dashboard/add-contest'></Navigate>
     }
 
-     if(role === 'admin'){
+    if (role === 'admin') {
         return <Navigate to='/dashboard/manage_users'></Navigate>
     }
 
-      if(role === 'user'){
+    if (role === 'user') {
         return <Navigate to='/dashboard/my_participated_contests'></Navigate>
     }
 };

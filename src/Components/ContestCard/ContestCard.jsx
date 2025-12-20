@@ -13,7 +13,7 @@ const ContestCard = ({ contest }) => {
             <div>
 
                 {/* Card */}
-                <div className='bg-base-100 rounded-t-lg'>
+                <div data-aos="flip-down" className='bg-base-100 rounded-t-lg'>
                     <div className="card-image">
                         <img src={contest.contestImage} alt="" className='rounded-t-lg h-60 w-full'/>
                     </div>
