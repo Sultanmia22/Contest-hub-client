@@ -23,7 +23,7 @@ A Modern Contest Creation & Participation Platform
 
 🔗 Live Site URL
 
-👉 https://contesthub-live.web.app
+👉 https://contesthub-a73a8.web.app
 
 (Replace with your actual deployed link)
 
