@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import Loading from '../../Components/LoadingPage/Loading';
 import ContestCard from '../../Components/ContestCard/ContestCard';
 import { NavLink } from 'react-router';
+import { FiFilter } from 'react-icons/fi';
 
 const AllContest = () => {
     const axiosSecure = useAxiosSecure()
@@ -22,8 +23,6 @@ const AllContest = () => {
         }
     });
 
-
-
     // GET ALL TYPE 
     const { data: contestTypes = [] } = useQuery({
         queryKey: ['all-type'],
@@ -31,18 +30,13 @@ const AllContest = () => {
             const result = await axiosSecure.get('/all-type');
             return result.data
         }
-
     })
-
-    console.log(contestTypes)
 
     // Handle tab contest 
     const handleTabContest = (type) => {
         setContestType(type)
         setActiveTab(type)
     }
-
-    // console.log(contestTypes)
 
     const { contests = [], totalPages } = data;
 
@@ -52,23 +46,57 @@ const AllContest = () => {
 
     return (
         <div className='flow-root'>
-            <div className='bg-primary px-5 py-8 my-4 rounded-xl'>
-                <h1 className='text-xl md:text-4xl font-bold text-white'>All Contests</h1>
-                <p className='text-sm md:text-[18px] text-white'>Discover and participate in amazing contests</p>
+            {/* Header Section */}
+            <div className='bg-gradient-to-r from-primary to-primary/90 dark:from-gray-900 dark:to-gray-900/90 px-6 md:px-8 py-10 md:py-14 my-4 md:my-8 rounded-2xl shadow-lg border border-secondary/20 dark:border-secondary/30'>
+                <h1 className='text-2xl md:text-5xl font-bold text-white mb-2'>
+                    All Contests
+                </h1>
+                <p className='text-sm md:text-lg text-gray-200 dark:text-gray-300'>
+                    Discover and participate in amazing contests
+                </p>
             </div>
 
-            <div className='flex items-center gap-3 flex-wrap'>
-                <button onClick={() => handleTabContest('All')} className={`${activeTab === 'All' && 'bg-primary'} text-[#FFFFFF] btn btn-xs md:btn-md btn-secondary`}>All</button>
-                {
-                    contestTypes.map((type, index) =>
+            {/* Filter Section */}
+            <div className='mb-8 md:mb-12'>
+                <div className='flex items-center gap-3 mb-4'>
+                    <FiFilter className='text-secondary text-xl' />
+                    <h3 className='text-lg font-semibold text-primary dark:text-primary'>Filter by Type</h3>
+                </div>
+                
+                <div className='flex items-center gap-3 flex-wrap bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md border border-secondary/20 dark:border-secondary/30'>
+                    {/* All Button */}
+                    <button 
+                        onClick={() => handleTabContest('All')} 
+                        className={`${
+                            activeTab === 'All' 
+                                ? 'bg-secondary text-white shadow-lg' 
+                                : 'bg-secondary/10 text-secondary hover:bg-secondary/20'
+                        } btn btn-xs md:btn-sm font-semibold rounded-lg transition-all duration-300 border-0`}
+                    >
+                        All
+                    </button>
 
-                        <NavLink onClick={() => handleTabContest(type)} key={index} className={`${activeTab === type && 'bg-primary'} text-[#FFFFFF] btn btn-xs md:btn-md btn-secondary`}> {type} </NavLink>
-                    )
-                }
-
+                    {/* Type Buttons */}
+                    {
+                        contestTypes.map((type, index) =>
+                            <NavLink 
+                                onClick={() => handleTabContest(type)} 
+                                key={index} 
+                                className={`${
+                                    activeTab === type 
+                                        ? 'bg-secondary text-white shadow-lg' 
+                                        : 'bg-secondary/10 text-secondary hover:bg-secondary/20'
+                                } btn btn-xs md:btn-sm font-semibold rounded-lg transition-all duration-300 border-0`}
+                            > 
+                                {type} 
+                            </NavLink>
+                        )
+                    }
+                </div>
             </div>
 
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 my-5 gap-5 md:my-20'>
+            {/* Contest Cards Grid */}
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-6 my-8 md:my-16'>
                 {
                     contests.map((contest, index) =>
                         <ContestCard key={index} contest={contest} />
@@ -76,21 +104,22 @@ const AllContest = () => {
                 }
             </div>
 
-
-            <div className="flex gap-2 justify-center my-4">
+            {/* Pagination */}
+            <div className="flex gap-2 justify-center my-8 md:my-16 flex-wrap">
                 {[...Array(totalPages).keys()].map(num => (
                     <button
                         key={num}
                         onClick={() => setPage(num + 1)}
-                        className={`btn btn-sm ${page === num + 1 ? 'btn-primary' : 'btn-outline'
-                            }`}
+                        className={`${
+                            page === num + 1 
+                                ? 'bg-secondary text-white shadow-lg font-semibold' 
+                                : 'bg-white dark:bg-gray-800 text-primary dark:text-primary border-2 border-secondary/30 dark:border-secondary/40 hover:border-secondary hover:shadow-md'
+                        } btn btn-sm rounded-lg transition-all duration-300`}
                     >
                         {num + 1}
                     </button>
                 ))}
             </div>
-
-
         </div>
     );
 };

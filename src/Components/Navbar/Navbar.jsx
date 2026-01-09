@@ -27,16 +27,16 @@ const Navbar = () => {
 
     const links = <>
         <li><NavLink className={({ isActive }) =>
-            isActive ? "border-b-2 border-primary text-yellow-300" : ""} to='/'>Home</NavLink></li>
+            isActive ? "border-b-2 border-accent text-accent" : ""} to='/'>Home</NavLink></li>
         <li><NavLink className={({ isActive }) =>
-            isActive ? "border-b-2 border-primary text-yellow-300" : ""} to='/all-contest'>All Contest</NavLink></li>
+            isActive ? "border-b-2 border-accent text-accent" : ""} to='/all-contest'>All Contest</NavLink></li>
         <li><NavLink className={({ isActive }) =>
-            isActive ? "border-b-2 border-primary text-yellow-300" : ""} to='/leaderboard'>Leaderboard</NavLink></li>
+            isActive ? "border-b-2 border-accent text-accent" : ""} to='/leaderboard'>Leaderboard</NavLink></li>
         <li><NavLink to='/about' className={({ isActive }) =>
-            isActive ? "border-b-2 border-primary text-yellow-300" : ""} >About</NavLink></li>
+            isActive ? "border-b-2 border-accent text-accent" : ""} >About</NavLink></li>
 
         <li><NavLink to='/contact' className={({ isActive }) =>
-            isActive ? "border-b-2 border-primary text-yellow-300" : ""} >Contact</NavLink></li>
+            isActive ? "border-b-2 border-accent text-accent" : ""} >Contact</NavLink></li>
     </>
 
 
@@ -55,7 +55,7 @@ const Navbar = () => {
     }, []);
 
     return (
-        <div className="navbar bg-secondary shadow-sm md:px-30">
+        <div className="navbar bg-secondary shadow-sm md:px-30 sticky z-20 top-0">
             <div className="navbar-start">
                 <div className="dropdown">
                     <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -79,7 +79,7 @@ const Navbar = () => {
                 <a className=" text-xl">
                     <div className='flex items-center gap-2'>
                         <GoTrophy size={24} className='text-[#FFFFFF] font-bold' />
-                        <h2 className='text-xl md:2xl font-semibold md:font-bold text-[#FFFFFF]'>Contest<span className='text-yellow-400'>H</span>ub</h2>
+                        <h2 className='text-xl md:2xl font-semibold md:font-bold text-[#FFFFFF]'>Contest<span className='text-accent font-bold'>H</span>ub</h2>
                     </div>
                 </a>
             </div>
@@ -99,7 +99,7 @@ const Navbar = () => {
 
                         {/* sun icon */}
                         <svg
-                            className="swap-off h-10 w-10 fill-current text-yellow-400"
+                            className="swap-off h-10 w-10 fill-current text-accent"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24">
                             <path
@@ -108,7 +108,7 @@ const Navbar = () => {
 
                         {/* moon icon */}
                         <svg
-                            className="swap-on h-10 w-10 fill-current text-primary"
+                            className="swap-on h-10 w-10 fill-current text-accent"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24">
                             <path
@@ -138,14 +138,12 @@ const Navbar = () => {
                                         </div>
 
                                         <a
-
                                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg dark:text-secondary"
                                         >
                                             <Link to='/dashboard/daynamicNavigate'>Dashboard</Link>
                                         </a>
 
                                         <a
-
                                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg dark:text-secondary md:hidden"
                                         >
                                             {/* theme section */}
@@ -156,7 +154,7 @@ const Navbar = () => {
 
                                                     {/* sun icon */}
                                                     <svg
-                                                        className="swap-off h-10 w-10 fill-current text-yellow-400"
+                                                        className="swap-off h-10 w-10 fill-current text-accent"
                                                         xmlns="http://www.w3.org/2000/svg"
                                                         viewBox="0 0 24 24">
                                                         <path
@@ -165,7 +163,7 @@ const Navbar = () => {
 
                                                     {/* moon icon */}
                                                     <svg
-                                                        className="swap-on h-10 w-10 fill-current text-primary"
+                                                        className="swap-on h-10 w-10 fill-current text-accent"
                                                         xmlns="http://www.w3.org/2000/svg"
                                                         viewBox="0 0 24 24">
                                                         <path
@@ -187,8 +185,8 @@ const Navbar = () => {
 
                             :
                             <div className='md:flex md:flex-row gap-4 hidden '>
-                                <Link to='login' className='font-medium btn btn-sm btn-primary'>Login</Link>
-                                <Link to='register' className='font-medium btn btn-sm btn-primary'>Sign Up</Link>
+                                <Link to='login' className='font-medium btn btn-sm btn-primary dark:text-gray-900'>Login</Link>
+                                <Link to='register' className='font-medium btn btn-sm btn-primary dark:text-gray-900'>Sign Up</Link>
                             </div>
                     }
 

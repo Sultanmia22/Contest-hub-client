@@ -81,7 +81,7 @@ const Banner = () => {
                                 </svg>
                                 <input type="text" value={searchText} onChange={(e) => setSearchText(e.target.value)} required placeholder="Search by contest types" className="placeholder:text-gray-500 text-primary" />
                             </label>
-                            <button onClick={() => handleSearch(searchText)} className="btn btn-primary"> Search </button>
+                            <button onClick={() => handleSearch(searchText)} className="btn btn-primary dark:text-gray-950"> Search </button>
                         </div>
 
                         {

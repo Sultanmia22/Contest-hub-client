@@ -17,7 +17,7 @@ const GoogleLogin = () => {
 
     return (
         <div>
-            <button onClick={handleGoogleLogin} className='btn btn-secondary w-full text-base-100'> <span><FcGoogle size={24}/></span> Continue with Google </button>
+            <button onClick={handleGoogleLogin} className='btn btn-secondary w-full text-base-100 dark:text-gray-50'> <span><FcGoogle size={24}/></span> Continue with Google </button>
         </div>
     );
 };
