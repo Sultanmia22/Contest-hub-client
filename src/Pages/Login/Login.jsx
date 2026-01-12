@@ -1,12 +1,40 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import GoogleLogin from '../../Components/SocialLogin/GoogleLogin';
 import { Link, useNavigate } from 'react-router';
 import useAuth from '../../Hook/useAuth';
 import { toast } from 'react-toastify';
 import { FiMail, FiLock, FiArrowRight } from 'react-icons/fi';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 const Login = () => {
+
+    const [role,setRole] = useState('')
+
+    const {data:demoEmails,} = useQuery({
+        queryKey: ['email',role],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:3000/demoEmail?email=${role}`)
+            return res.data
+        },
+
+         enabled: !!role,
+    })
+
+    console.log(demoEmails)
+
+    // open demo email modal 
+
+    const demoEmailRef = useRef()
+    const handleOpenDemoEMAIL = () => {
+        demoEmailRef.current.showModal()
+    }
+
+    const handleGetUserEmail = (role) => {
+        setRole(role)
+        
+    }
 
     const { loginUsers } = useAuth()
     const navigate = useNavigate()
@@ -37,9 +65,9 @@ const Login = () => {
 
     return (
         <div className='flex flex-col justify-center items-center min-h-screen bg-white dark:bg-gray-900 px-4 py-12'>
-            
+
             {/* Header Section */}
-            <div className='space-y-4 pb-8 text-center mb-8 max-w-md'>
+            <div className='space-y-4 pb-8 text-center mb-4 max-w-md'>
                 <h2 className='text-4xl md:text-5xl font-bold text-primary dark:text-white'>
                     Welcome Back
                 </h2>
@@ -51,9 +79,16 @@ const Login = () => {
                 </div>
             </div>
 
+            {/* Demo email */}
+            <div className='flex items-center gap-5 mb-5'>
+                <button onClick={handleOpenDemoEMAIL} className='btn text-base'>Click for Demo Email</button>
+                <button className='btn text-base'>Click for Demo Password</button>
+            </div>
+
+
             {/* Login Card */}
             <div className="bg-white dark:bg-gray-800 w-full max-w-md rounded-3xl shadow-2xl border-2 border-secondary/10 dark:border-secondary/20 overflow-hidden">
-                
+
                 {/* Card Header */}
                 <div className='bg-gradient-to-r from-secondary to-secondary/80 dark:from-secondary dark:to-secondary/90 p-8 text-center'>
                     <h3 className='text-2xl font-bold text-white'>Sign In</h3>
@@ -63,7 +98,7 @@ const Login = () => {
                 {/* Card Body */}
                 <div className="p-8 space-y-6">
                     <form onSubmit={handleSubmit(handleLogin)} className='space-y-6'>
-                        
+
                         {/* Email Field */}
                         <div className='space-y-3'>
                             <label className="block text-lg font-bold text-primary dark:text-white">
@@ -71,21 +106,23 @@ const Login = () => {
                             </label>
                             <div className='relative'>
                                 <FiMail className='absolute left-4 top-4 text-secondary text-xl' />
-                                <input 
-                                    type="email" 
-                                    {...register('email', { 
+                                <input
+                                defaultValue={demoEmails?.email}
+                                    type="email"
+                                    {...register('email', {
                                         required: 'Email is required',
                                         pattern: {
                                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                                             message: 'Invalid email address'
                                         }
-                                    })} 
-                                    className="w-full pl-12 pr-4 py-3 border-2 border-secondary/30 dark:border-secondary/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:text-white text-primary" 
-                                    placeholder="your@email.com" 
+                                    })}
+                                    className="w-full pl-12 pr-4 py-3 border-2 border-secondary/30 dark:border-secondary/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:text-white text-primary"
+                                    placeholder="your@email.com"
                                 />
                             </div>
                             {errors.email && <span className='text-red-500 text-sm font-medium'>{errors.email.message}</span>}
                         </div>
+                        
 
                         {/* Password Field */}
                         <div className='space-y-3'>
@@ -94,17 +131,17 @@ const Login = () => {
                             </label>
                             <div className='relative'>
                                 <FiLock className='absolute left-4 top-4 text-secondary text-xl' />
-                                <input 
-                                    type="password" 
-                                    {...register('password', { 
+                                <input
+                                    type="password"
+                                    {...register('password', {
                                         required: 'Password is required',
                                         minLength: {
                                             value: 6,
                                             message: 'Password must be at least 6 characters'
                                         }
-                                    })} 
-                                    className="w-full pl-12 pr-4 py-3 border-2 border-secondary/30 dark:border-secondary/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:text-white text-primary" 
-                                    placeholder="Enter your password" 
+                                    })}
+                                    className="w-full pl-12 pr-4 py-3 border-2 border-secondary/30 dark:border-secondary/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:text-white text-primary"
+                                    placeholder="Enter your password"
                                 />
                             </div>
                             {errors.password && <span className='text-red-500 text-sm font-medium'>{errors.password.message}</span>}
@@ -118,7 +155,7 @@ const Login = () => {
                         </div>
 
                         {/* Login Button */}
-                        <button 
+                        <button
                             type='submit'
                             className='w-full bg-gradient-to-r from-secondary to-secondary/80 hover:shadow-xl text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 text-lg'
                         >
@@ -145,9 +182,9 @@ const Login = () => {
                     {/* Sign Up Link */}
                     <div className='text-center pt-4 border-t-2 border-secondary/10 dark:border-secondary/20'>
                         <p className='text-gray-700 dark:text-gray-300'>
-                            Don't have an account? 
-                            <Link 
-                                to='/register' 
+                            Don't have an account?
+                            <Link
+                                to='/register'
                                 className='font-bold text-secondary hover:text-secondary/80 ml-2 transition-colors'
                             >
                                 Create one
@@ -156,7 +193,26 @@ const Login = () => {
                     </div>
                 </div>
             </div>
+
+            <button className="btn" onClick={() => document.getElementById('my_modal_1').showModal()}>open modal</button>
+            <dialog ref={demoEmailRef} id="my_modal_1" className="modal">
+                <div className="modal-box">
+                    <div className='flex items-center gap-5'>
+                        <button onClick={ () => handleGetUserEmail('user')} className='btn'>User Email</button>
+                        <button onClick={ () => handleGetUserEmail('creator')} className='btn'>Creator Email</button>
+                        <button onClick={ () => handleGetUserEmail('admin')} className='btn'>Admin Email</button>
+                    </div>
+                    <div className="modal-action">
+                        <form method="dialog">
+                            {/* if there is a button in form, it will close the modal */}
+                            <button className="btn">Close</button>
+                        </form>
+                    </div>
+                </div>
+            </dialog>
+
         </div>
+
     );
 };
 
