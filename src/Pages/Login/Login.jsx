@@ -10,41 +10,63 @@ import axios from 'axios';
 
 const Login = () => {
 
-    const [role,setRole] = useState('')
+    const {
+        register,
+        handleSubmit,
+        watch,
+        setValue,
+        formState: { errors },
+    } = useForm();
 
-    const {data:demoEmails,} = useQuery({
-        queryKey: ['email',role],
+    const [role, setRole] = useState('')
+    // const [password, setPassword] = useState('')
+
+    const { data: demoEmails, } = useQuery({
+        queryKey: ['email', role],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:3000/demoEmail?email=${role}`)
+            const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/demoEmail?email=${role}`)
             return res.data
         },
 
-         enabled: !!role,
+        enabled: !!role,
     })
 
-    console.log(demoEmails)
+    
 
     // open demo email modal 
 
     const demoEmailRef = useRef()
+    const demoPasswordRef = useRef()
+
+
     const handleOpenDemoEMAIL = () => {
         demoEmailRef.current.showModal()
     }
 
+
+    const handleOpenDemoPassword = () => {
+        demoPasswordRef.current.showModal()
+    }
+
     const handleGetUserEmail = (role) => {
         setRole(role)
+        setValue('email', demoEmails?.email)
+        demoEmailRef.current.close()
+
+    }
+
+
+    const handleGetDemoPassord = (password) => {
         
+         setValue('password', password)
+        demoPasswordRef.current.close()
+
     }
 
     const { loginUsers } = useAuth()
     const navigate = useNavigate()
 
-    const {
-        register,
-        handleSubmit,
-        watch,
-        formState: { errors },
-    } = useForm();
+
 
     const handleLogin = async (data) => {
         try {
@@ -82,7 +104,7 @@ const Login = () => {
             {/* Demo email */}
             <div className='flex items-center gap-5 mb-5'>
                 <button onClick={handleOpenDemoEMAIL} className='btn text-base'>Click for Demo Email</button>
-                <button className='btn text-base'>Click for Demo Password</button>
+                <button onClick={handleOpenDemoPassword} className='btn text-base'>Click for Demo Password</button>
             </div>
 
 
@@ -107,7 +129,7 @@ const Login = () => {
                             <div className='relative'>
                                 <FiMail className='absolute left-4 top-4 text-secondary text-xl' />
                                 <input
-                                defaultValue={demoEmails?.email}
+                                    
                                     type="email"
                                     {...register('email', {
                                         required: 'Email is required',
@@ -122,7 +144,7 @@ const Login = () => {
                             </div>
                             {errors.email && <span className='text-red-500 text-sm font-medium'>{errors.email.message}</span>}
                         </div>
-                        
+
 
                         {/* Password Field */}
                         <div className='space-y-3'>
@@ -132,6 +154,7 @@ const Login = () => {
                             <div className='relative'>
                                 <FiLock className='absolute left-4 top-4 text-secondary text-xl' />
                                 <input
+                                    
                                     type="password"
                                     {...register('password', {
                                         required: 'Password is required',
@@ -194,13 +217,13 @@ const Login = () => {
                 </div>
             </div>
 
-            <button className="btn" onClick={() => document.getElementById('my_modal_1').showModal()}>open modal</button>
-            <dialog ref={demoEmailRef} id="my_modal_1" className="modal">
+
+            <dialog ref={demoEmailRef} className="modal">
                 <div className="modal-box">
                     <div className='flex items-center gap-5'>
-                        <button onClick={ () => handleGetUserEmail('user')} className='btn'>User Email</button>
-                        <button onClick={ () => handleGetUserEmail('creator')} className='btn'>Creator Email</button>
-                        <button onClick={ () => handleGetUserEmail('admin')} className='btn'>Admin Email</button>
+                        <button onClick={() => handleGetUserEmail('user')} className='btn'>User Email</button>
+                        <button onClick={() => handleGetUserEmail('creator')} className='btn'>Creator Email</button>
+                        <button onClick={() => handleGetUserEmail('admin')} className='btn'>Admin Email</button>
                     </div>
                     <div className="modal-action">
                         <form method="dialog">
@@ -210,6 +233,24 @@ const Login = () => {
                     </div>
                 </div>
             </dialog>
+
+
+            <dialog ref={demoPasswordRef} className="modal">
+                <div className="modal-box">
+                    <div className='flex items-center gap-5'>
+                        <button onClick={() => handleGetDemoPassord('Emon1234@#')} className='btn'>User Password</button>
+                        <button onClick={() => handleGetDemoPassord('Emon1234@#')} className='btn'>Creator Password</button>
+                        <button onClick={() => handleGetDemoPassord('Emon1234@#')} className='btn'>Admin Password</button>
+                    </div>
+                    <div className="modal-action">
+                        <form method="dialog">
+                            {/* if there is a button in form, it will close the modal */}
+                            <button className="btn">Close</button>
+                        </form>
+                    </div>
+                </div>
+            </dialog>
+
 
         </div>
 
