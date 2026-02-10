@@ -63,7 +63,7 @@ const Banner = () => {
                         Join thousands of creators and compete to win amazing prizes
                     </p>
 
-                    <div className="relative pt-2 flex flex-col md:flex-row gap-2">
+                {/*     <div className="relative pt-2 flex flex-col md:flex-row gap-2">
 
                         <div className="flex items-center">
                             <label className="input">
@@ -106,7 +106,7 @@ const Banner = () => {
                             </div>
 
                         }
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
