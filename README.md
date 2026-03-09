@@ -1,5 +1,4 @@
-Gemini said
-Ekta professional GitHub README.md file-er jonno nicher description-ti use korte paro. Ami eta ke gochhiye ebong attractive bhabe likhe diyechhi:
+
 
 🏆 ContestHub – Modern Contest Creation & Participation Platform
 ContestHub is a full-stack web application designed for creating, managing, and participating in various contests. From creative writing to technical challenges, it provides a seamless experience for creators to host contests and for users to compete and win.
