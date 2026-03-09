@@ -33,10 +33,10 @@ const Leaderboard = () => {
                     <div className='flex items-center justify-center gap-3 mb-4'>
                         <MdLeaderboard className='text-secondary text-4xl md:text-5xl animate-pulse' />
                     </div>
-                    <h2 className='text-3xl md:text-6xl font-bold text-white dark:text-white'>
+                    <h2 className='text-3xl md:text-6xl font-bold text-gray-800 dark:text-white'>
                         Leaderboard
                     </h2>
-                    <p className='text-base md:text-lg text-gray-300 dark:text-gray-100'>
+                    <p className='text-base md:text-lg text-gray-600 dark:text-gray-100'>
                         Dynamic Rankings by Contest Wins
                     </p>
                     <div className='flex justify-center'>
