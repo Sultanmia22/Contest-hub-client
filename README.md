@@ -66,7 +66,8 @@ Landing Page	User Dashboard	Leaderboard
 Clone the repository:
 
 Bash
-git clone https://github.com/your-username/contesthub.git
+https://github.com/Sultanmia22/Contest-hub-client.git
+https://github.com/Sultanmia22/Contest-hub-server.git
 Install dependencies:
 
 Bash
