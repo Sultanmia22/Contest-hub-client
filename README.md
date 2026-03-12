@@ -66,8 +66,9 @@ Landing Page	User Dashboard	Leaderboard
 Clone the repository:
 
 Bash
-https://github.com/Sultanmia22/Contest-hub-client.git
-https://github.com/Sultanmia22/Contest-hub-server.git
+Clinet : https://github.com/Sultanmia22/Contest-hub-client.git
+
+Server : https://github.com/Sultanmia22/Contest-hub-server.git
 Install dependencies:
 
 Bash
