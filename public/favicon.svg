@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="hubGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+  </defs>
+  <!-- Background Card -->
+  <rect width="64" height="64" rx="16" fill="#0F172A" />
+  
+  <!-- Outer C-shaped Contest Arch -->
+  <path d="M44 21C39 16 31 16 25 20C18 25 18 35 24 42C29 47 38 48 44 44" 
+        stroke="url(#hubGrad)" 
+        stroke-width="5.5" 
+        stroke-linecap="round" 
+        fill="none" />
+        
+  <!-- Center Trophy/Winner Star -->
+  <polygon points="36,22 38.5,27.5 44.5,28.3 40.2,32.5 41.2,38.5 36,35.7 30.8,38.5 31.8,32.5 27.5,28.3 33.5,27.5" 
+           fill="#F59E0B" />
+</svg>
