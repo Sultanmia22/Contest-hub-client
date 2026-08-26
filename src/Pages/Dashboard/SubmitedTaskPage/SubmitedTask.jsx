@@ -1,6 +1,6 @@
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import React, { useState } from 'react';
-import { FaUser, FaCheckCircle } from 'react-icons/fa';
+import { FaUser, FaCheckCircle, FaChevronDown } from 'react-icons/fa';
 import { MdOutlineMail } from 'react-icons/md';
 import { VscFileSymlinkFile } from 'react-icons/vsc';
 import useAuth from '../../../Hook/useAuth';
@@ -10,190 +10,227 @@ import { toast } from 'react-toastify';
 import { FiCalendar, FiLink } from 'react-icons/fi';
 
 const SubmitedTask = () => {
-    const { user, Loading } = useAuth()
-    const axiosSecure = useAxiosSecure()
+    const { user, loading: authLoading } = useAuth();
+    const axiosSecure = useAxiosSecure();
 
-    // get perticipant and task data
-    const { data: taskContest = [], isLoading } = useQuery({
+    // get participant and task data
+    const { data: taskContest = [], isLoading, refetch } = useQuery({
         queryKey: ['submitInfo', user?.email],
         queryFn: async () => {
-            const result = await axiosSecure.get(`/all-submit-task?creatorEmail=${user?.email}`)
-            return result.data
-        }
-    })
+            const result = await axiosSecure.get(`/all-submit-task?creatorEmail=${user?.email}`);
+            return result.data;
+        },
+        enabled: !!user?.email,
+    });
 
     // Handle Declare winner
-    const handleDeclare = async (id, email, perticipantEmail) => {
-        const result = await axiosSecure.patch(`/declare-winner?contestId=${id}&creatorEmail=${email}`, { perticipant: perticipantEmail })
-        if (result.data.winnerDeclared === true) {
-            return toast.error('Winner Already Declared')
+    const handleDeclare = async (id, email, participantEmail) => {
+        try {
+            const result = await axiosSecure.patch(`/declare-winner?contestId=${id}&creatorEmail=${email}`, { 
+                participant: participantEmail 
+            });
+            
+            if (result.data?.winnerDeclared === true) {
+                toast.error('Winner already declared');
+                return;
+            }
+            
+            toast.success('Winner declared successfully!');
+            refetch();
+        } catch (error) {
+            toast.error('Failed to declare winner');
         }
-        toast.success('Winner Declared Successfully!')
-    }
+    };
 
-    console.log(taskContest)
-
-    if (Loading) {
-        return <Loading />
+    if (authLoading || isLoading) {
+        return <Loading />;
     }
 
     return (
-        <div className='flow-root bg-white dark:bg-gray-900 min-h-screen py-12 px-4 md:px-8'>
-            
-            {/* Header Section */}
-            <div className='max-w-5xl mx-auto mb-12'>
-                <div className='space-y-4 border-b-2 border-secondary/20 dark:border-secondary/30 pb-6'>
-                    <h2 className='text-3xl md:text-5xl font-bold text-primary dark:text-white'>
+        <div className="min-h-screen bg-gray-50 px-4 py-8 dark:bg-gray-950">
+            <div className="mx-auto max-w-5xl">
+                
+                {/* Header Section */}
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
                         Submitted Tasks
-                    </h2>
-                    <p className='text-gray-700 dark:text-gray-300 text-lg'>
-                        Manage contest submissions and declare winners
+                    </h1>
+                    <p className="mt-2 text-gray-600 dark:text-gray-400">
+                        Review participant submissions and declare contest winners
                     </p>
-                    <div className='flex justify-start'>
-                        <div className='h-1 w-24 bg-gradient-to-r from-secondary via-accent to-secondary rounded-full'></div>
-                    </div>
                 </div>
 
-                {/* Count Badge */}
-                <div className='mt-6'>
-                    <span className='inline-block px-6 py-2 bg-secondary/20 dark:bg-secondary/30 text-secondary dark:text-secondary font-bold rounded-full text-lg'>
-                        Total Submissions: {taskContest?.length}
+                {/* Stats Badge */}
+                <div className="mb-6">
+                    <span className="inline-flex items-center rounded-full bg-blue-50 px-4 py-1.5 text-sm font-semibold text-blue-700 ring-1 ring-blue-600/20 dark:bg-blue-900/30 dark:text-blue-300 dark:ring-blue-500/30">
+                        Total Submissions: {taskContest?.length || 0}
                     </span>
                 </div>
-            </div>
 
-            {/* Tasks List */}
-            <div className='max-w-5xl mx-auto space-y-6'>
-                {
-                    taskContest?.map((task, index) =>
-                        <div key={index} className='mb-6'>
-                            <div className="collapse collapse-arrow bg-white dark:bg-gray-800 border-2 border-secondary/10 dark:border-secondary/20 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
-                                <input type="checkbox" />
+                {/* Tasks List */}
+                <div className="space-y-4">
+                    {taskContest?.map((task, index) => (
+                        <div 
+                            key={task?._id || index} 
+                            className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800 overflow-hidden"
+                        >
+                            {/* Accordion using DaisyUI collapse - clean style */}
+                            <div className="collapse collapse-arrow">
+                                <input type="checkbox" className="peer" /> 
                                 
-                                {/* Collapse Title */}
-                                <div className="collapse-title space-y-3 p-6 md:p-8">
-                                    <h3 className='text-xl md:text-2xl font-bold text-primary dark:text-white hover:text-secondary transition-colors'>
-                                        {task?.perticipantName}
-                                    </h3>
-                                    <div className='flex items-center gap-2'>
-                                        <MdOutlineMail className='text-secondary text-lg' />
-                                        <p className='text-gray-700 dark:text-gray-300 text-sm md:text-base'>
-                                            {task?.perticipantEmail}
+                                {/* Collapse Title / Header */}
+                                <div className="collapse-title peer-checked:bg-gray-50 dark:peer-checked:bg-gray-700/50 cursor-pointer p-6 transition-colors">
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                                {task?.perticipantName || 'Unknown Participant'}
+                                            </h3>
+                                            <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700 ring-1 ring-green-600/20 dark:bg-green-900/20 dark:text-green-300">
+                                                Submitted
+                                            </span>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                                            <MdOutlineMail size={16} />
+                                            <span className="truncate">{task?.perticipantEmail}</span>
+                                        </div>
+                                        
+                                        <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mt-1">
+                                            {task?.perticipantContent?.submitedInfo || 'No submission details provided.'}
                                         </p>
                                     </div>
-                                    <p className='text-gray-600 dark:text-gray-400 text-sm md:text-base line-clamp-2'>
-                                        {task?.perticipantContent?.submitedInfo}
-                                    </p>
                                 </div>
 
                                 {/* Collapse Content */}
-                                <div className="collapse-content text-sm border-t-2 border-secondary/10 dark:border-secondary/20 p-6 md:p-8 bg-gradient-to-br from-secondary/5 to-transparent dark:from-secondary/10">
-                                    
-                                    {/* Participant Info Row */}
-                                    <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-8'>
-                                        {/* Name */}
-                                        <div className='space-y-3'>
-                                            <h4 className='font-bold text-primary dark:text-white md:text-lg flex items-center gap-2'>
-                                                <FaUser className='text-secondary' />
-                                                Participant Name
-                                            </h4>
-                                            <div className='bg-white dark:bg-gray-700 p-4 rounded-lg border-l-4 border-secondary'>
-                                                <p className='text-primary dark:text-white font-medium'>
-                                                    {task?.perticipantName}
+                                <div className="collapse-content peer-checked:block hidden bg-gray-50/50 dark:bg-gray-900/30">
+                                    <div className="p-6 border-t border-gray-200 dark:border-gray-700 space-y-6">
+                                        
+                                        {/* Info Grid */}
+                                        <div className="grid gap-6 sm:grid-cols-2">
+                                            {/* Participant Name */}
+                                            <div>
+                                                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                                    Participant Name
+                                                </label>
+                                                <div className="rounded-lg bg-white p-3 border border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+                                                    <div className="flex items-center gap-2">
+                                                        <FaUser className="text-gray-400" size={16} />
+                                                        <span className="font-medium text-gray-900 dark:text-white">
+                                                            {task?.perticipantName}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Email */}
+                                            <div>
+                                                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                                    Email Address
+                                                </label>
+                                                <div className="rounded-lg bg-white p-3 border border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+                                                    <div className="flex items-center gap-2">
+                                                        <MdOutlineMail className="text-gray-400" size={16} />
+                                                        <span className="text-sm text-gray-900 dark:text-white break-all">
+                                                            {task?.perticipantEmail}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Submission Details */}
+                                        <div>
+                                            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                                Submission Details
+                                            </label>
+                                            <div className="rounded-lg bg-white p-4 border border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+                                                <p className="text-sm leading-relaxed text-gray-800 dark:text-gray-200">
+                                                    {task?.perticipantContent?.submitedInfo || 'No details provided'}
                                                 </p>
                                             </div>
                                         </div>
 
-                                        {/* Email */}
-                                        <div className='space-y-3'>
-                                            <h4 className='font-bold text-primary dark:text-white md:text-lg flex items-center gap-2'>
-                                                <MdOutlineMail className='text-secondary' />
-                                                Email Address
-                                            </h4>
-                                            <div className='bg-white dark:bg-gray-700 p-4 rounded-lg border-l-4 border-secondary'>
-                                                <p className='text-primary dark:text-white font-medium text-sm md:text-base break-all'>
-                                                    {task?.perticipantEmail}
-                                                </p>
+                                        {/* Submitted Link */}
+                                        <div>
+                                            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                                Submitted Link
+                                            </label>
+                                            <div className="rounded-lg bg-white p-4 border border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+                                                <a 
+                                                    href={task?.perticipantContent?.submitLink}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 break-all"
+                                                >
+                                                    <FiLink size={16} />
+                                                    {task?.perticipantContent?.submitLink}
+                                                </a>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* Submission Info */}
-                                    <div className='space-y-3 mb-8'>
-                                        <h4 className='font-bold text-primary dark:text-white md:text-lg'>
-                                            Submission Details
-                                        </h4>
-                                        <div className='bg-white dark:bg-gray-700 p-4 rounded-lg border-l-4 border-secondary'>
-                                            <p className='text-primary dark:text-white font-medium text-sm md:text-base leading-relaxed'>
-                                                {task?.perticipantContent?.submitedInfo}
-                                            </p>
+                                        {/* Submitted Date */}
+                                        <div>
+                                            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                                Submitted Date
+                                            </label>
+                                            <div className="rounded-lg bg-white p-3 border border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+                                                <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                                    <FiCalendar size={16} className="text-gray-400" />
+                                                    <span>
+                                                        {task?.submitedDate 
+                                                            ? new Date(task.submitedDate).toLocaleDateString('en-US', {
+                                                                year: 'numeric',
+                                                                month: 'long',
+                                                                day: 'numeric',
+                                                                hour: '2-digit',
+                                                                minute: '2-digit'
+                                                            })
+                                                            : 'Unknown date'
+                                                        }
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    {/* Submission Link */}
-                                    <div className='space-y-3 mb-8'>
-                                        <h4 className='font-bold text-primary dark:text-white md:text-lg flex items-center gap-2'>
-                                            <FiLink className='text-secondary' />
-                                            Submitted Link
-                                        </h4>
-                                        <div className='bg-white dark:bg-gray-700 p-4 rounded-lg border-l-4 border-secondary flex items-start gap-3'>
-                                            <VscFileSymlinkFile className='text-secondary text-lg flex-shrink-0 mt-1' />
-                                            <a 
-                                                href={task?.perticipantContent?.submitLink}
-                                                target='_blank'
-                                                rel='noreferrer'
-                                                className='text-secondary dark:text-secondary hover:underline break-all text-sm md:text-base font-medium'
+                                        {/* Divider */}
+                                        <div className="border-t border-gray-200 dark:border-gray-700" />
+
+                                        {/* Action Button */}
+                                        <div className="flex justify-end">
+                                            <button 
+                                                onClick={() => handleDeclare(
+                                                    task?.contestId, 
+                                                    task?.creatorEmail, 
+                                                    task?.perticipantEmail
+                                                )}
+                                                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:bg-blue-600 dark:hover:bg-blue-700"
                                             >
-                                                {task?.perticipantContent?.submitLink}
-                                            </a>
+                                                <FaCheckCircle size={16} />
+                                                Declare Winner
+                                            </button>
                                         </div>
-                                    </div>
-
-                                    {/* Submitted Date */}
-                                    <div className='space-y-3 mb-8'>
-                                        <h4 className='font-bold text-primary dark:text-white md:text-lg flex items-center gap-2'>
-                                            <FiCalendar className='text-secondary' />
-                                            Submitted Date
-                                        </h4>
-                                        <div className='bg-white dark:bg-gray-700 p-4 rounded-lg border-l-4 border-secondary'>
-                                            <p className='text-primary dark:text-white font-medium text-sm md:text-base'>
-                                                {new Date(task?.submitedDate).toLocaleDateString('en-US', {
-                                                    year: 'numeric',
-                                                    month: 'long',
-                                                    day: 'numeric',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit'
-                                                })}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    {/* Action Button */}
-                                    <div className='flex justify-center pt-4'>
-                                        <button 
-                                            onClick={() => handleDeclare(task?.contestId, task?.creatorEmail, task?.perticipantEmail)}
-                                            className='bg-gradient-to-r from-secondary to-secondary/80 hover:shadow-xl text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 flex items-center gap-2 text-lg'
-                                        >
-                                            <FaCheckCircle size={20} />
-                                            Declare Winner
-                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    )
-                }
-            </div>
-
-            {/* Empty State */}
-            {taskContest.length === 0 && (
-                <div className='text-center py-16 max-w-5xl mx-auto'>
-                    <VscFileSymlinkFile className='text-6xl text-secondary/30 mx-auto mb-4' />
-                    <p className='text-gray-600 dark:text-gray-400 text-lg font-medium'>
-                        No submitted tasks yet. Submissions will appear here.
-                    </p>
+                    ))}
                 </div>
-            )}
+
+                {/* Empty State */}
+                {taskContest.length === 0 && (
+                    <div className="flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white py-16 text-center dark:border-gray-700 dark:bg-gray-800">
+                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+                            <VscFileSymlinkFile className="text-2xl text-gray-400" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                            No submissions yet
+                        </h3>
+                        <p className="mt-1 max-w-sm text-sm text-gray-500 dark:text-gray-400">
+                            Submissions will appear here once participants submit their tasks.
+                        </p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
