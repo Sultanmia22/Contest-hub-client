@@ -1,180 +1,297 @@
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
-import { FaRegEdit, FaUsers, FaTrophy } from 'react-icons/fa';
+import { Link } from 'react-router';
+import { toast } from 'react-toastify';
+import { FaRegEdit, FaUsers, FaTrophy, FaPlus } from 'react-icons/fa';
 import { RiDeleteBinLine } from 'react-icons/ri';
+
 import useAuth from '../../../Hook/useAuth';
 import useAxiosSecure from '../../../Hook/useAxiosSecure';
 import Loading from '../../../Components/LoadingPage/Loading';
-import { Link } from 'react-router';
-import { toast } from 'react-toastify';
 
 const MyContest = () => {
-    const { user } = useAuth()
-    const axiosSecure = useAxiosSecure()
+    const { user } = useAuth();
+    const axiosSecure = useAxiosSecure();
+
+    // Tab State
+    const [activeTab, setActiveTab] = useState('all');
+
     const { data: contests = [], isLoading, refetch } = useQuery({
         queryKey: ['my-contest', user?.email],
         queryFn: async () => {
-            const result = await axiosSecure.get(`/my-contest?email=${user?.email}`)
+            const result = await axiosSecure.get(`/my-contest?email=${user?.email}`);
             return result.data;
-        }
-    })
+        },
+        enabled: !!user?.email,
+    });
 
     // DELETE CONTEST FUNCTION 
     const handleDeleteContest = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this contest?')) return;
+        
         try {
-            const result = await axiosSecure.delete(`/delete-contest/${id}`)
-            refetch()
-            toast.success('Delete Successfully!')
-        }
-        catch (er) {
-            // console.log(er)
-        }
-    }
-
-    // Get status styling
-    const getStatusBadge = (status) => {
-        switch(status) {
-            case 'pending':
-                return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-600';
-            case 'active':
-                return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-600';
-            case 'completed':
-                return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-600';
-            default:
-                return 'bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600';
+            await axiosSecure.delete(`/delete-contest/${id}`);
+            refetch();
+            toast.success('Contest deleted successfully');
+        } catch (error) {
+            toast.error('Failed to delete contest');
         }
     };
 
+    // Filter contests based on active tab
+    const filteredContests = contests.filter((contest) => {
+        if (activeTab === 'all') return true;
+        return contest.status?.toLowerCase() === activeTab.toLowerCase();
+    });
+
+    // Render status badge as JSX element
+    const getStatusBadge = (status) => {
+        const baseClasses = 'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium capitalize';
+        let colorClasses = '';
+
+        switch(status?.toLowerCase()) {
+            case 'pending':
+                colorClasses = 'bg-yellow-50 text-yellow-700 ring-1 ring-yellow-600/20 dark:bg-yellow-900/20 dark:text-yellow-300 dark:ring-yellow-500/30';
+                break;
+            case 'active':
+                colorClasses = 'bg-blue-50 text-blue-700 ring-1 ring-blue-600/20 dark:bg-blue-900/20 dark:text-blue-300 dark:ring-blue-500/30';
+                break;
+            case 'completed':
+                colorClasses = 'bg-green-50 text-green-700 ring-1 ring-green-600/20 dark:bg-green-900/20 dark:text-green-300 dark:ring-green-500/30';
+                break;
+            default:
+                colorClasses = 'bg-gray-50 text-gray-700 ring-1 ring-gray-600/20 dark:bg-gray-800 dark:text-gray-300 dark:ring-gray-500/30';
+        }
+
+        return (
+            <span className={`${baseClasses} ${colorClasses}`}>
+                {status || 'Pending'}
+            </span>
+        );
+    };
+
     if (isLoading) {
-        return <Loading />
+        return <Loading />;
     }
 
+    // Tabs Config
+    const tabs = [
+        { id: 'all', label: 'All Contests', count: contests.length },
+        { id: 'pending', label: 'Pending', count: contests.filter(c => c.status?.toLowerCase() === 'pending').length },
+        { id: 'active', label: 'Active', count: contests.filter(c => c.status?.toLowerCase() === 'active').length },
+        { id: 'completed', label: 'Completed', count: contests.filter(c => c.status?.toLowerCase() === 'completed').length },
+    ];
+
     return (
-        <div className='flow-root'>
-            
-            {/* Header Section */}
-            <div className='bg-gradient-to-r from-secondary via-secondary/90 to-secondary/80 dark:from-secondary dark:to-secondary/90 mx-4 md:mx-10 my-6 p-8 md:p-10 rounded-2xl shadow-lg border-2 border-secondary/20'>
-                <h2 className='text-2xl md:text-4xl text-white font-bold mb-2'>My Created Contests</h2>
-                <p className='text-white/90 text-sm md:text-base'>Manage and track all your contests</p>
-            </div>
+        <div className="min-h-screen bg-gray-50 px-4 py-8 dark:bg-gray-950">
+            <div className="mx-auto max-w-6xl">
+                
+                {/* Header Section */}
+                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
+                            My Contests
+                        </h1>
+                        <p className="mt-2 text-gray-600 dark:text-gray-400">
+                            Manage your created contests and track their performance
+                        </p>
+                    </div>
+                    
+                    <Link
+                        to="/dashboard/add-contest"
+                        className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
+                    >
+                        <FaPlus size={16} />
+                        Create Contest
+                    </Link>
+                </div>
 
-            {/* Table Section */}
-            <div className='mx-4 md:mx-10 my-8'>
+                {/* Stats Overview */}
+                <div className="mb-8 grid gap-4 sm:grid-cols-3">
+                    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                        <div className="flex items-center gap-4">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                                <FaTrophy size={20} />
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Total Contests</p>
+                                <p className="text-2xl font-bold text-gray-900 dark:text-white">{contests.length}</p>
+                            </div>
+                        </div>
+                    </div>
 
-                {/* MOBILE RESPONSIVE WRAPPER */}
-                <div className="overflow-x-auto w-full rounded-2xl shadow-xl border-2 border-secondary/20 dark:border-secondary/30">
+                    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                        <div className="flex items-center gap-4">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400">
+                                <FaUsers size={20} />
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Pending</p>
+                                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                    {contests.filter(c => c.status?.toLowerCase() === 'pending').length}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
-                    {/* TABLE */}
-                    <table className="table table-zebra w-full min-w-[600px] bg-white dark:bg-gray-800">
+                    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                        <div className="flex items-center gap-4">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400">
+                                <FaTrophy size={20} />
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Active</p>
+                                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                    {contests.filter(c => c.status?.toLowerCase() === 'active').length}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                        {/* Head */}
-                        <thead className='bg-gradient-to-r from-secondary to-secondary/80 dark:from-secondary dark:to-secondary/90 text-white font-bold text-sm md:text-base'>
-                            <tr>
-                                <th className='py-4 text-center'>No.</th>
-                                <th className='py-4'>Contest Name</th>
-                                <th className='py-4 text-center'>Status</th>
-                                <th className='py-4 text-center'>Participants</th>
-                                <th className='py-4 text-center'>Prize</th>
-                                <th className='py-4 text-center'>Action</th>
-                            </tr>
-                        </thead>
+                {/* Table Card Container */}
+                <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                    
+                    {/* Navigation Tabs Header */}
+                    <div className="flex border-b border-gray-200 px-6 pt-4 gap-6 overflow-x-auto dark:border-gray-700">
+                        {tabs.map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`flex items-center gap-2 pb-3.5 text-sm font-semibold transition-colors relative border-b-2 whitespace-nowrap ${
+                                    activeTab === tab.id
+                                        ? 'border-blue-600 text-blue-600 dark:border-blue-500 dark:text-blue-400'
+                                        : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                                }`}
+                            >
+                                {tab.label}
+                                <span className={`rounded-full px-2 py-0.5 text-xs font-medium transition-colors ${
+                                    activeTab === tab.id
+                                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
+                                        : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                                }`}>
+                                    {tab.count}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
 
-                        {/* Body */}
-                        <tbody>
-                            {
-                                contests.map((contest, index) =>
+                    {/* Table Section */}
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900/50">
+                                <tr>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white w-16">#</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Contest Name</th>
+                                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-white">Status</th>
+                                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-white">Participants</th>
+                                    <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900 dark:text-white">Prize</th>
+                                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-white">Actions</th>
+                                </tr>
+                            </thead>
+                            
+                            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                                {filteredContests.map((contest, index) => (
                                     <tr 
-                                        key={index}
-                                        className='border-b border-secondary/10 dark:border-secondary/20 hover:bg-secondary/5 dark:hover:bg-secondary/10 transition-colors duration-300'
+                                        key={contest._id || index}
+                                        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                                     >
-                                        {/* Number */}
-                                        <th className='py-5 text-center'>
-                                            <span className='inline-block w-8 h-8 rounded-full bg-secondary/20 dark:bg-secondary/30 text-primary dark:text-white font-bold flex items-center justify-center text-sm'>
+                                        <td className="px-6 py-4">
+                                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                                                 {index + 1}
                                             </span>
-                                        </th>
-
-                                        {/* Contest Name */}
-                                        <td className='py-5'>
-                                            <div className='font-semibold text-primary dark:text-white text-sm md:text-base'>
+                                        </td>
+                                        
+                                        <td className="px-6 py-4">
+                                            <div className="font-medium text-gray-900 dark:text-white">
                                                 {contest.contestName}
                                             </div>
                                         </td>
-
-                                        {/* Status */}
-                                        <td className='py-5 text-center'>
-                                            <span className={`inline-block px-4 py-2 rounded-full text-xs font-semibold ${getStatusBadge(contest.status)}`}>
-                                                {contest.status === 'pending' && '⏳ Pending'}
-                                                {contest.status === 'active' && '🔴 Active'}
-                                                {contest.status === 'completed' && '✅ Completed'}
-                                                {!['pending', 'active', 'completed'].includes(contest.status) && contest.status}
+                                        
+                                        <td className="px-6 py-4 text-center">
+                                            {getStatusBadge(contest.status)}
+                                        </td>
+                                        
+                                        <td className="px-6 py-4 text-center">
+                                            <div className="inline-flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300">
+                                                <FaUsers size={14} className="text-gray-400" />
+                                                {contest.participantsCount || 0}
+                                            </div>
+                                        </td>
+                                        
+                                        <td className="px-6 py-4 text-right">
+                                            <span className="font-semibold text-gray-900 dark:text-white">
+                                                ${(contest.prizeMoney || 0).toLocaleString()}
                                             </span>
                                         </td>
-
-                                        {/* Participants */}
-                                        <td className='py-5 text-center'>
-                                            <div className='flex items-center justify-center gap-2 font-semibold text-primary dark:text-white'>
-                                                <FaUsers size={16} className='text-secondary' />
-                                                <span>{contest.participantsCount}</span>
-                                            </div>
-                                        </td>
-
-                                        {/* Prize */}
-                                        <td className='py-5 text-center'>
-                                            <div className='flex items-center justify-center gap-2 font-semibold text-secondary'>
-                                                <FaTrophy size={16} />
-                                                <span>${contest.prizeMoney}</span>
-                                            </div>
-                                        </td>
-
-                                        {/* Action */}
-                                        <td className='py-5'>
-                                            <div className='flex justify-center gap-3'>
-                                                {/* Edit Button */}
-                                                <Link 
-                                                    disabled={contest.status !== 'pending'} 
-                                                    to={`/dashboard/edit-cotest/${contest?._id}`}
-                                                    className={`p-3 rounded-lg transition-all duration-300 flex items-center justify-center ${
-                                                        contest.status === 'pending'
-                                                            ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 hover:bg-blue-200 hover:shadow-lg'
-                                                            : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-50'
+                                        
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center justify-center gap-2">
+                                                <Link
+                                                    to={contest.status?.toLowerCase() === 'pending' ? `/dashboard/edit-contest/${contest._id}` : '#'}
+                                                    className={`inline-flex items-center justify-center rounded-lg p-2 transition-colors ${
+                                                        contest.status?.toLowerCase() === 'pending'
+                                                            ? 'text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20'
+                                                            : 'cursor-not-allowed text-gray-400 dark:text-gray-600'
                                                     }`}
-                                                    title={contest.status !== 'pending' ? 'Can only edit pending contests' : 'Edit contest'}
+                                                    title={contest.status?.toLowerCase() !== 'pending' ? 'Only pending contests can be edited' : 'Edit contest'}
+                                                    onClick={(e) => {
+                                                        if (contest.status?.toLowerCase() !== 'pending') {
+                                                            e.preventDefault();
+                                                            toast.info('Only pending contests can be edited');
+                                                        }
+                                                    }}
                                                 >
                                                     <FaRegEdit size={18} />
                                                 </Link>
 
-                                                {/* Delete Button */}
-                                                <button 
-                                                    disabled={contest.status !== 'pending'} 
+                                                <button
                                                     onClick={() => handleDeleteContest(contest._id)}
-                                                    className={`p-3 rounded-lg transition-all duration-300 flex items-center justify-center ${
-                                                        contest.status === 'pending'
-                                                            ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300 hover:bg-red-200 hover:shadow-lg'
-                                                            : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-50'
+                                                    className={`inline-flex items-center justify-center rounded-lg p-2 transition-colors ${
+                                                        contest.status?.toLowerCase() === 'pending'
+                                                            ? 'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20'
+                                                            : 'cursor-not-allowed text-gray-400 dark:text-gray-600'
                                                     }`}
-                                                    title={contest.status !== 'pending' ? 'Can only delete pending contests' : 'Delete contest'}
+                                                    title={contest.status?.toLowerCase() !== 'pending' ? 'Only pending contests can be deleted' : 'Delete contest'}
+                                                    disabled={contest.status?.toLowerCase() !== 'pending'}
                                                 >
                                                     <RiDeleteBinLine size={18} />
                                                 </button>
                                             </div>
                                         </td>
                                     </tr>
-                                )
-                            }
-                        </tbody>
-                    </table>
-                </div>
-
-                {/* Empty State */}
-                {contests.length === 0 && (
-                    <div className='text-center py-16'>
-                        <FaTrophy className='text-6xl text-secondary/30 mx-auto mb-4' />
-                        <p className='text-gray-600 dark:text-gray-400 text-lg font-medium'>
-                            No contests created yet. Create your first contest!
-                        </p>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
-                )}
+
+                    {/* Empty State */}
+                    {filteredContests.length === 0 && (
+                        <div className="flex flex-col items-center justify-center py-16 px-4">
+                            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+                                <FaTrophy className="text-2xl text-gray-400" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                                {activeTab === 'all' ? 'No contests yet' : `No ${activeTab} contests`}
+                            </h3>
+                            <p className="text-center text-sm text-gray-500 dark:text-gray-400 max-w-sm mb-6">
+                                {activeTab === 'all'
+                                    ? "You haven't created any contests yet. Start by creating your first contest to attract participants."
+                                    : `There are currently no contests in "${activeTab}" status.`
+                                }
+                            </p>
+                            {activeTab === 'all' && (
+                                <Link
+                                    to="/dashboard/add-contest"
+                                    className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+                                >
+                                    <FaPlus size={16} />
+                                    Create Your First Contest
+                                </Link>
+                            )}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
