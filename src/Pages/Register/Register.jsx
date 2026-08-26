@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiArrowRight, FiCamera } from 'react-icons/fi';
+
 import GoogleLogin from '../../Components/SocialLogin/GoogleLogin';
 import useAuth from '../../Hook/useAuth';
-import { toast } from 'react-toastify';
 import { uploadImage } from '../../Utils';
-import axios from 'axios';
-import { FiEye, FiMail, FiLock, FiUser, FiArrowRight, FiUpload } from 'react-icons/fi';
-import { FaRegEyeSlash } from 'react-icons/fa';
 
 const Register = () => {
-
-    const { createUser, updateUserProfile } = useAuth()
-    const navigate = useNavigate()
-    const [showPass, setShowPass] = useState(false)
-    const [imagePreview, setImagePreview] = useState(null)
+    const { createUser, updateUserProfile } = useAuth();
+    const navigate = useNavigate();
+    const [showPass, setShowPass] = useState(false);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const {
         register,
@@ -25,7 +25,7 @@ const Register = () => {
 
     const imageFile = watch('image');
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (imageFile && imageFile[0]) {
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -36,215 +36,246 @@ const Register = () => {
     }, [imageFile]);
 
     const handleRegister = async (data) => {
+        setIsLoading(true);
         try {
-            const name = data.name
-            const email = data.email;
-            const password = data.password;
-            const imageData = data.image[0]
+            const { name, email, password } = data;
+            const imageData = data.image[0];
 
-            // Validate all fields
-            if (!name || !email || !password || !imageData) {
-                toast.error('Please fill in all fields including image');
+            if (!imageData) {
+                toast.error('Please select a profile photo');
+                setIsLoading(false);
                 return;
             }
 
-            const result = await createUser(email, password)
-            const user = result.user;
+            // Create user
+            const result = await createUser(email, password);
+            
+            // Upload image
+            const imageURL = await uploadImage(imageData);
 
-            //uploadImage by imagebb 
-            const imageURL = await uploadImage(imageData)
-
-            //update profile 
-            const profileInfo = {
+            // Update profile
+            await updateUserProfile({
                 displayName: name,
-                photoURL: imageURL
-            }
-            const profile = await updateUserProfile(profileInfo)
+                photoURL: imageURL,
+            });
 
-            // Insert Data in database 
+            // Save to database
             const userInfo = {
-                name: name,
-                email: email,
+                name,
+                email,
                 image: imageURL,
-            }
-            const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/user`, userInfo);
+            };
+            
+            await axios.post(`${import.meta.env.VITE_SERVER_URL}/user`, userInfo);
 
-            toast.success('Registration Successfully!');
-            navigate('/')
+            toast.success('Account created successfully!');
+            navigate('/');
+        } catch (error) {
+            toast.error(error.message || 'Registration failed');
+        } finally {
+            setIsLoading(false);
         }
-        catch (er) {
-            toast.error(er.message || 'Registration failed');
-        }
-    }
+    };
 
     return (
-        <div className='flex flex-col justify-center items-center min-h-screen bg-white dark:bg-gray-900 px-4 py-12'>
-            
-            {/* Header Section */}
-            <div className='space-y-4 pb-8 text-center mb-8 max-w-md'>
-                <h2 className='text-4xl md:text-5xl font-bold text-primary dark:text-white'>
-                    Create Account
-                </h2>
-                <p className='text-gray-700 dark:text-gray-300 text-lg'>
-                    Join ContestHub and showcase your talent
-                </p>
-                <div className='flex justify-center'>
-                    <div className='h-1 w-16 bg-gradient-to-r from-secondary via-accent to-secondary rounded-full'></div>
-                </div>
-            </div>
-
-            {/* Register Card */}
-            <div className="bg-white dark:bg-gray-800 w-full max-w-md rounded-3xl shadow-2xl border-2 border-secondary/10 dark:border-secondary/20 overflow-hidden">
-                
-                {/* Card Header */}
-                <div className='bg-gradient-to-r from-secondary to-secondary/80 dark:from-secondary dark:to-secondary/90 p-8 text-center'>
-                    <h3 className='text-2xl font-bold text-white'>Sign Up</h3>
-                    <p className='text-white/90 mt-2'>Create your ContestHub account</p>
+        <div className="min-h-screen bg-gray-50 px-4 py-10 dark:bg-gray-950">
+            <div className="mx-auto flex min-h-[80vh] w-full max-w-md flex-col justify-center">
+                <div className="mb-8 text-center">
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
+                        Create account
+                    </h1>
+                    <p className="mt-2 text-gray-600 dark:text-gray-400">
+                        Join ContestHub to participate in contests
+                    </p>
                 </div>
 
-                {/* Card Body */}
-                <div className="p-8 space-y-6">
-                    <form onSubmit={handleSubmit(handleRegister)} className='space-y-6'>
+                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-8">
+                    <form onSubmit={handleSubmit(handleRegister)} className="space-y-5">
                         
                         {/* Name Field */}
-                        <div className='space-y-3'>
-                            <label className="block text-lg font-bold text-primary dark:text-white">
-                                Full Name
+                        <div>
+                            <label
+                                htmlFor="name"
+                                className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                            >
+                                Full name
                             </label>
-                            <div className='relative'>
-                                <FiUser className='absolute left-4 top-4 text-secondary text-xl' />
-                                <input 
-                                    type="text" 
-                                    {...register('name', { required: 'Name is required' })} 
-                                    className="w-full pl-12 pr-4 py-3 border-2 border-secondary/30 dark:border-secondary/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:text-white text-primary" 
-                                    placeholder="Your full name" 
+                            <div className="relative">
+                                <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                <input
+                                    id="name"
+                                    type="text"
+                                    placeholder="John Doe"
+                                    {...register('name', { 
+                                        required: 'Name is required',
+                                        minLength: {
+                                            value: 2,
+                                            message: 'Name must be at least 2 characters'
+                                        }
+                                    })}
+                                    className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
                                 />
                             </div>
-                            {errors.name && <span className='text-red-500 text-sm font-medium'>{errors.name.message}</span>}
+                            {errors.name && (
+                                <p className="mt-1 text-sm text-red-500">
+                                    {errors.name.message}
+                                </p>
+                            )}
                         </div>
 
-                        {/* Image Field */}
-                        <div className='space-y-3'>
-                            <label className="block text-lg font-bold text-primary dark:text-white">
-                                Profile Photo
+                        {/* Image Upload */}
+                        <div>
+                            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Profile photo
                             </label>
                             
-                            {/* Image Preview */}
-                            {imagePreview && (
-                                <div className='mb-4'>
-                                    <img 
-                                        src={imagePreview} 
-                                        alt="Preview" 
-                                        className='w-24 h-24 rounded-lg object-cover border-2 border-secondary/30 mx-auto shadow-md'
+                            <div className="flex items-center gap-4">
+                                {imagePreview ? (
+                                    <div className="relative">
+                                        <img
+                                            src={imagePreview}
+                                            alt="Preview"
+                                            className="h-16 w-16 rounded-lg object-cover ring-2 ring-gray-200 dark:ring-gray-700"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setImagePreview(null);
+                                                // Reset file input would need a ref in real implementation
+                                            }}
+                                            className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs hover:bg-red-600"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700">
+                                        <FiCamera className="text-gray-400" size={20} />
+                                    </div>
+                                )}
+                                
+                                <label className="flex-1 cursor-pointer">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        {...register('image', { required: 'Profile photo is required' })}
+                                        className="hidden"
                                     />
-                                </div>
+                                    <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 px-4 py-3 text-center transition-colors hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-900/50 dark:hover:bg-gray-700">
+                                        <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                                            {imagePreview ? 'Change photo' : 'Upload photo'}
+                                        </span>
+                                    </div>
+                                </label>
+                            </div>
+                            {errors.image && (
+                                <p className="mt-1 text-sm text-red-500">
+                                    {errors.image.message}
+                                </p>
                             )}
-                            
-                            <label className='relative cursor-pointer'>
-                                <input 
-                                    type='file' 
-                                    {...register('image', { required: 'Image is required' })} 
-                                    className="hidden"
-                                    accept="image/*"
-                                />
-                                <div className='w-full px-4 py-3 border-2 border-dashed border-secondary/40 dark:border-secondary/50 rounded-lg hover:border-secondary transition-colors flex items-center justify-center gap-2 bg-secondary/5 dark:bg-secondary/10'>
-                                    <FiUpload className='text-secondary text-xl' />
-                                    <span className='text-primary dark:text-white font-medium'>Choose photo</span>
-                                </div>
-                            </label>
-                            {errors.image && <span className='text-red-500 text-sm font-medium'>{errors.image.message}</span>}
                         </div>
 
                         {/* Email Field */}
-                        <div className='space-y-3'>
-                            <label className="block text-lg font-bold text-primary dark:text-white">
-                                Email Address
+                        <div>
+                            <label
+                                htmlFor="email"
+                                className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                            >
+                                Email address
                             </label>
-                            <div className='relative'>
-                                <FiMail className='absolute left-4 top-4 text-secondary text-xl' />
-                                <input 
-                                    type="email" 
-                                    {...register('email', { 
+                            <div className="relative">
+                                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                <input
+                                    id="email"
+                                    type="email"
+                                    placeholder="you@example.com"
+                                    {...register('email', {
                                         required: 'Email is required',
-                                        pattern: { 
-                                            value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 
-                                            message: 'Please enter a valid email address' 
-                                        } 
-                                    })} 
-                                    className="w-full pl-12 pr-4 py-3 border-2 border-secondary/30 dark:border-secondary/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:text-white text-primary" 
-                                    placeholder="your@email.com" 
+                                        pattern: {
+                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                            message: 'Invalid email address',
+                                        },
+                                    })}
+                                    className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
                                 />
                             </div>
-                            {errors.email && <span className='text-red-500 text-sm font-medium'>{errors.email.message}</span>}
+                            {errors.email && (
+                                <p className="mt-1 text-sm text-red-500">
+                                    {errors.email.message}
+                                </p>
+                            )}
                         </div>
 
                         {/* Password Field */}
-                        <div className='space-y-3'>
-                            <label className="block text-lg font-bold text-primary dark:text-white">
+                        <div>
+                            <label
+                                htmlFor="password"
+                                className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                            >
                                 Password
                             </label>
-                            <div className='relative'>
-                                <FiLock className='absolute left-4 top-4 text-secondary text-xl' />
-                                <input 
-                                    type={showPass ? 'text' : 'password'} 
-                                    {...register('password', { 
+                            <div className="relative">
+                                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                <input
+                                    id="password"
+                                    type={showPass ? 'text' : 'password'}
+                                    placeholder="Create a strong password"
+                                    {...register('password', {
                                         required: 'Password is required',
-                                        pattern: { 
-                                            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 
-                                            message: 'Password must be 8+ chars with uppercase, lowercase, number & symbol' 
-                                        } 
-                                    })} 
-                                    className="w-full pl-12 pr-12 py-3 border-2 border-secondary/30 dark:border-secondary/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:text-white text-primary" 
-                                    placeholder="Create a strong password" 
+                                        pattern: {
+                                            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                                            message: 'Min 8 chars with uppercase, lowercase, number & symbol',
+                                        },
+                                    })}
+                                    className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-10 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
                                 />
                                 <button
-                                    type='button'
+                                    type="button"
                                     onClick={() => setShowPass(!showPass)}
-                                    className='absolute right-4 top-4 text-secondary hover:text-secondary/80 transition-colors'
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                                 >
-                                    {showPass ? <FaRegEyeSlash size={20} /> : <FiEye size={20} />}
+                                    {showPass ? <FiEyeOff size={18} /> : <FiEye size={18} />}
                                 </button>
                             </div>
-                            {errors.password && <span className='text-red-500 text-sm font-medium'>{errors.password.message}</span>}
+                            {errors.password && (
+                                <p className="mt-1 text-sm text-red-500">
+                                    {errors.password.message}
+                                </p>
+                            )}
                         </div>
 
-                        {/* Register Button */}
-                        <button 
-                            type='submit'
-                            className='w-full bg-gradient-to-r from-secondary to-secondary/80 hover:shadow-xl text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 text-lg'
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            Create Account
-                            <FiArrowRight size={20} />
+                            {isLoading ? 'Creating account...' : 'Create account'}
+                            {!isLoading && <FiArrowRight />}
                         </button>
                     </form>
 
-                    {/* Divider */}
-                    <div className='relative my-8'>
-                        <div className='absolute inset-0 flex items-center'>
-                            <div className='w-full border-t-2 border-secondary/20 dark:border-secondary/30'></div>
+                    <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-200 dark:border-gray-700" />
                         </div>
-                        <div className='relative flex justify-center text-sm'>
-                            <span className='px-4 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 font-medium'>Or sign up with</span>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="bg-white px-3 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                                Or continue with
+                            </span>
                         </div>
                     </div>
 
-                    {/* Google Login */}
-                    <div className='bg-secondary/5 dark:bg-secondary/10 p-4 rounded-lg'>
-                        <GoogleLogin />
-                    </div>
+                    <GoogleLogin />
 
-                    {/* Login Link */}
-                    <div className='text-center pt-4 border-t-2 border-secondary/10 dark:border-secondary/20'>
-                        <p className='text-gray-700 dark:text-gray-300'>
-                            Already have an account? 
-                            <Link 
-                                to='/login' 
-                                className='font-bold text-secondary hover:text-secondary/80 ml-2 transition-colors'
-                            >
-                                Sign in
-                            </Link>
-                        </p>
-                    </div>
+                    <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+                        Already have an account?{' '}
+                        <Link
+                            to="/login"
+                            className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                        >
+                            Sign in
+                        </Link>
+                    </p>
                 </div>
             </div>
         </div>

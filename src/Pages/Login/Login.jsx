@@ -1,259 +1,291 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import GoogleLogin from '../../Components/SocialLogin/GoogleLogin';
 import { Link, useNavigate } from 'react-router';
-import useAuth from '../../Hook/useAuth';
-import { toast } from 'react-toastify';
-import { FiMail, FiLock, FiArrowRight } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import { FiMail, FiLock, FiArrowRight } from 'react-icons/fi';
+
+import GoogleLogin from '../../Components/SocialLogin/GoogleLogin';
+import useAuth from '../../Hook/useAuth';
 
 const Login = () => {
+    const { loginUsers } = useAuth();
+    const navigate = useNavigate();
+    const [role, setRole] = useState('');
+
+    const demoEmailRef = useRef(null);
+    const demoPasswordRef = useRef(null);
 
     const {
         register,
         handleSubmit,
-        watch,
         setValue,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm();
 
-    const [role, setRole] = useState('')
-    // const [password, setPassword] = useState('')
-
-    const { data: demoEmails, } = useQuery({
+    const { data: demoEmails } = useQuery({
         queryKey: ['email', role],
         queryFn: async () => {
-            const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/demoEmail?email=${role}`)
-            return res.data
+            const res = await axios.get(
+                `${import.meta.env.VITE_SERVER_URL}/demoEmail?email=${role}`
+            );
+            return res.data;
         },
-
         enabled: !!role,
-    })
+    });
 
-    
+    useEffect(() => {
+        if (demoEmails?.email) {
+            setValue('email', demoEmails.email);
+            demoEmailRef.current?.close();
+        }
+    }, [demoEmails, setValue]);
 
-    // open demo email modal 
-
-    const demoEmailRef = useRef()
-    const demoPasswordRef = useRef()
-
-
-    const handleOpenDemoEMAIL = () => {
-        demoEmailRef.current.showModal()
-    }
-
+    const handleOpenDemoEmail = () => {
+        demoEmailRef.current?.showModal();
+    };
 
     const handleOpenDemoPassword = () => {
-        demoPasswordRef.current.showModal()
-    }
+        demoPasswordRef.current?.showModal();
+    };
 
-    const handleGetUserEmail = (role) => {
-        setRole(role)
-        setValue('email', demoEmails?.email)
-        demoEmailRef.current.close()
+    const handleGetUserEmail = (selectedRole) => {
+        setRole(selectedRole);
+    };
 
-    }
-
-
-    const handleGetDemoPassord = (password) => {
-        
-         setValue('password', password)
-        demoPasswordRef.current.close()
-
-    }
-
-    const { loginUsers } = useAuth()
-    const navigate = useNavigate()
-
-
+    const handleGetDemoPassword = (password) => {
+        setValue('password', password);
+        demoPasswordRef.current?.close();
+    };
 
     const handleLogin = async (data) => {
         try {
-            const email = data.email;
-            const password = data.password;
-
-            const result = await loginUsers(email, password);
-            const user = result.user;
-
-            toast.success('Login Successfully!')
-            navigate('/')
+            await loginUsers(data.email, data.password);
+            toast.success('Login successful');
+            navigate('/');
+        } catch (error) {
+            toast.error(error.message);
         }
-        catch (er) {
-            // console.log(er)
-            toast.error(er.message)
-        }
-    }
+    };
 
     return (
-        <div className='flex flex-col justify-center items-center min-h-screen bg-white dark:bg-gray-900 px-4 py-12'>
-
-            {/* Header Section */}
-            <div className='space-y-4 pb-8 text-center mb-4 max-w-md'>
-                <h2 className='text-4xl md:text-5xl font-bold text-primary dark:text-white'>
-                    Welcome Back
-                </h2>
-                <p className='text-gray-700 dark:text-gray-300 text-lg'>
-                    Login to your ContestHub account
-                </p>
-                <div className='flex justify-center'>
-                    <div className='h-1 w-16 bg-gradient-to-r from-secondary via-accent to-secondary rounded-full'></div>
-                </div>
-            </div>
-
-            {/* Demo email */}
-            <div className='flex items-center gap-5 mb-5'>
-                <button onClick={handleOpenDemoEMAIL} className='btn text-base'>Click for Demo Email</button>
-                <button onClick={handleOpenDemoPassword} className='btn text-base'>Click for Demo Password</button>
-            </div>
-
-
-            {/* Login Card */}
-            <div className="bg-white dark:bg-gray-800 w-full max-w-md rounded-3xl shadow-2xl border-2 border-secondary/10 dark:border-secondary/20 overflow-hidden">
-
-                {/* Card Header */}
-                <div className='bg-gradient-to-r from-secondary to-secondary/80 dark:from-secondary dark:to-secondary/90 p-8 text-center'>
-                    <h3 className='text-2xl font-bold text-white'>Sign In</h3>
-                    <p className='text-white/90 mt-2'>Enter your credentials to continue</p>
+        <div className="min-h-screen bg-gray-50 px-4 py-10 dark:bg-gray-950">
+            <div className="mx-auto flex min-h-[80vh] w-full max-w-md flex-col justify-center">
+                <div className="mb-8 text-center">
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
+                        Welcome back
+                    </h1>
+                    <p className="mt-2 text-gray-600 dark:text-gray-400">
+                        Sign in to your ContestHub account
+                    </p>
                 </div>
 
-                {/* Card Body */}
-                <div className="p-8 space-y-6">
-                    <form onSubmit={handleSubmit(handleLogin)} className='space-y-6'>
+                <div className="mb-4 flex gap-3">
+                    <button
+                        type="button"
+                        onClick={handleOpenDemoEmail}
+                        className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                    >
+                        Demo email
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleOpenDemoPassword}
+                        className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                    >
+                        Demo password
+                    </button>
+                </div>
 
-                        {/* Email Field */}
-                        <div className='space-y-3'>
-                            <label className="block text-lg font-bold text-primary dark:text-white">
-                                Email Address
+                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-8">
+                    <form onSubmit={handleSubmit(handleLogin)} className="space-y-5">
+                        <div>
+                            <label
+                                htmlFor="email"
+                                className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                            >
+                                Email address
                             </label>
-                            <div className='relative'>
-                                <FiMail className='absolute left-4 top-4 text-secondary text-xl' />
+                            <div className="relative">
+                                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                 <input
-                                    
+                                    id="email"
                                     type="email"
+                                    placeholder="you@example.com"
                                     {...register('email', {
                                         required: 'Email is required',
                                         pattern: {
                                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                            message: 'Invalid email address'
-                                        }
+                                            message: 'Invalid email address',
+                                        },
                                     })}
-                                    className="w-full pl-12 pr-4 py-3 border-2 border-secondary/30 dark:border-secondary/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:text-white text-primary"
-                                    placeholder="your@email.com"
+                                    className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
                                 />
                             </div>
-                            {errors.email && <span className='text-red-500 text-sm font-medium'>{errors.email.message}</span>}
+                            {errors.email && (
+                                <p className="mt-1 text-sm text-red-500">
+                                    {errors.email.message}
+                                </p>
+                            )}
                         </div>
 
-
-                        {/* Password Field */}
-                        <div className='space-y-3'>
-                            <label className="block text-lg font-bold text-primary dark:text-white">
+                        <div>
+                            <label
+                                htmlFor="password"
+                                className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                            >
                                 Password
                             </label>
-                            <div className='relative'>
-                                <FiLock className='absolute left-4 top-4 text-secondary text-xl' />
+                            <div className="relative">
+                                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                 <input
-                                    
+                                    id="password"
                                     type="password"
+                                    placeholder="Enter your password"
                                     {...register('password', {
                                         required: 'Password is required',
                                         minLength: {
                                             value: 6,
-                                            message: 'Password must be at least 6 characters'
-                                        }
+                                            message: 'Password must be at least 6 characters',
+                                        },
                                     })}
-                                    className="w-full pl-12 pr-4 py-3 border-2 border-secondary/30 dark:border-secondary/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:text-white text-primary"
-                                    placeholder="Enter your password"
+                                    className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
                                 />
                             </div>
-                            {errors.password && <span className='text-red-500 text-sm font-medium'>{errors.password.message}</span>}
+                            {errors.password && (
+                                <p className="mt-1 text-sm text-red-500">
+                                    {errors.password.message}
+                                </p>
+                            )}
                         </div>
 
-                        {/* Forgot Password Link */}
-                        <div className='flex justify-end'>
-                            <Link to='/forgot-password' className='text-secondary hover:text-secondary/80 text-sm font-semibold transition-colors'>
+                        <div className="flex justify-end">
+                            <Link
+                                to="/forgot-password"
+                                className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                            >
                                 Forgot password?
                             </Link>
                         </div>
 
-                        {/* Login Button */}
                         <button
-                            type='submit'
-                            className='w-full bg-gradient-to-r from-secondary to-secondary/80 hover:shadow-xl text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 text-lg'
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            Sign In
-                            <FiArrowRight size={20} />
+                            {isSubmitting ? 'Signing in...' : 'Sign in'}
+                            <FiArrowRight />
                         </button>
                     </form>
 
-                    {/* Divider */}
-                    <div className='relative my-8'>
-                        <div className='absolute inset-0 flex items-center'>
-                            <div className='w-full border-t-2 border-secondary/20 dark:border-secondary/30'></div>
+                    <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-200 dark:border-gray-700" />
                         </div>
-                        <div className='relative flex justify-center text-sm'>
-                            <span className='px-4 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 font-medium'>Or continue with</span>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="bg-white px-3 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                                Or continue with
+                            </span>
                         </div>
                     </div>
 
-                    {/* Google Login */}
-                    <div className='bg-secondary/5 dark:bg-secondary/10 p-4 rounded-lg'>
-                        <GoogleLogin />
-                    </div>
+                    <GoogleLogin />
 
-                    {/* Sign Up Link */}
-                    <div className='text-center pt-4 border-t-2 border-secondary/10 dark:border-secondary/20'>
-                        <p className='text-gray-700 dark:text-gray-300'>
-                            Don't have an account?
-                            <Link
-                                to='/register'
-                                className='font-bold text-secondary hover:text-secondary/80 ml-2 transition-colors'
-                            >
-                                Create one
-                            </Link>
-                        </p>
-                    </div>
+                    <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+                        Don&apos;t have an account?{' '}
+                        <Link
+                            to="/register"
+                            className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                        >
+                            Create one
+                        </Link>
+                    </p>
                 </div>
             </div>
 
-
             <dialog ref={demoEmailRef} className="modal">
-                <div className="modal-box">
-                    <div className='flex items-center gap-5'>
-                        <button onClick={() => handleGetUserEmail('user')} className='btn'>User Email</button>
-                        <button onClick={() => handleGetUserEmail('creator')} className='btn'>Creator Email</button>
-                        <button onClick={() => handleGetUserEmail('admin')} className='btn'>Admin Email</button>
+                <div className="modal-box rounded-2xl bg-white dark:bg-gray-800">
+                    <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+                        Choose a demo account
+                    </h3>
+                    <div className="grid gap-3">
+                        <button
+                            type="button"
+                            onClick={() => handleGetUserEmail('user')}
+                            className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                        >
+                            User email
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleGetUserEmail('creator')}
+                            className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                        >
+                            Creator email
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleGetUserEmail('admin')}
+                            className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                        >
+                            Admin email
+                        </button>
                     </div>
                     <div className="modal-action">
                         <form method="dialog">
-                            {/* if there is a button in form, it will close the modal */}
-                            <button className="btn">Close</button>
+                            <button className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700">
+                                Close
+                            </button>
                         </form>
                     </div>
                 </div>
+                <form method="dialog" className="modal-backdrop">
+                    <button>close</button>
+                </form>
             </dialog>
-
 
             <dialog ref={demoPasswordRef} className="modal">
-                <div className="modal-box">
-                    <div className='flex items-center gap-5'>
-                        <button onClick={() => handleGetDemoPassord('Emon1234@#')} className='btn'>User Password</button>
-                        <button onClick={() => handleGetDemoPassord('Emon1234@#')} className='btn'>Creator Password</button>
-                        <button onClick={() => handleGetDemoPassord('Emon1234@#')} className='btn'>Admin Password</button>
+                <div className="modal-box rounded-2xl bg-white dark:bg-gray-800">
+                    <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+                        Choose a demo password
+                    </h3>
+                    <div className="grid gap-3">
+                        <button
+                            type="button"
+                            onClick={() => handleGetDemoPassword('Emon1234@#')}
+                            className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                        >
+                            User password
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleGetDemoPassword('Emon1234@#')}
+                            className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                        >
+                            Creator password
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleGetDemoPassword('Emon1234@#')}
+                            className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                        >
+                            Admin password
+                        </button>
                     </div>
                     <div className="modal-action">
                         <form method="dialog">
-                            {/* if there is a button in form, it will close the modal */}
-                            <button className="btn">Close</button>
+                            <button className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700">
+                                Close
+                            </button>
                         </form>
                     </div>
                 </div>
+                <form method="dialog" className="modal-backdrop">
+                    <button>close</button>
+                </form>
             </dialog>
-
-
         </div>
-
     );
 };
 
