@@ -84,7 +84,7 @@ const ContestDetails = () => {
 
             const hours = Math.floor(
                 (totalTimeLeft % (1000 * 60 * 60 * 24)) /
-                    (1000 * 60 * 60)
+                (1000 * 60 * 60)
             );
 
             const minutes = Math.floor(

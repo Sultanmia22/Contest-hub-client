@@ -6,7 +6,7 @@ import { MdEmail, MdLeaderboard } from 'react-icons/md';
 
 const Leaderboard = () => {
     const axiosSecure = useAxiosSecure();
-    
+
     const { data: datas = [], isLoading } = useQuery({
         queryKey: ['leaderboard'],
         queryFn: async () => {
@@ -32,7 +32,7 @@ const Leaderboard = () => {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
-                
+
                 {/* Header */}
                 <div className="text-center mb-10">
                     <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4 shadow-lg">
@@ -153,10 +153,10 @@ const Leaderboard = () => {
                                         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                                             {restOfList.map((data, index) => {
                                                 const actualRank = index + 4;
-                                                
+
                                                 return (
-                                                    <tr 
-                                                        key={actualRank} 
+                                                    <tr
+                                                        key={actualRank}
                                                         className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200"
                                                     >
                                                         <td className="px-6 py-4 whitespace-nowrap">

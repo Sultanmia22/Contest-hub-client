@@ -1,311 +1,366 @@
 import React, { useState } from 'react';
 import useAuth from '../../../../Hook/useAuth';
 import { uploadImage } from '../../../../Utils';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 import useAxiosSecure from '../../../../Hook/useAxiosSecure';
-import { FaRegEdit, FaCamera } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import { FaRegEdit, FaCamera, FaEnvelope, FaMapMarkerAlt, FaTrophy, FaChartPie } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../../../../Components/LoadingPage/Loading';
-import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
+import { Cell, Pie, PieChart, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
-const COLORS = ['#0D9488', '#F59E0B'];
+const COLORS = ['#2563EB', '#EF4444']; // Blue for won, Red for lost
 
 const Profile = () => {
-    const { user, updateUserProfile, loading } = useAuth()
-    const axiosSecure = useAxiosSecure()
-    const [edits, setEdits] = useState(false)
+    const { user, updateUserProfile, loading } = useAuth();
+    const axiosSecure = useAxiosSecure();
+    const [isEditing, setIsEditing] = useState(false);
 
     const {
         register,
         handleSubmit,
-        watch,
-        formState: { errors },
-    } = useForm()
+        formState: { errors, isSubmitting },
+    } = useForm();
 
-    // get info 
-    const { data: profileInfo = {}, isLoading } = useQuery({
+    // Get profile info
+    const { data: profileInfo = {}, isLoading: profileLoading } = useQuery({
         queryKey: ['profileInfo', user?.email],
         queryFn: async () => {
             const result = await axiosSecure.get(`/profileInfo?email=${user?.email}`);
-            return result.data
-        }
-    })
+            return result.data;
+        },
+        enabled: !!user?.email,
+    });
 
-    console.log(profileInfo)
-
-    // Change photo url
-    const handleChangePhoto = async (imageData) => {
-        const imageURL = await uploadImage(imageData)
-        await updateUserProfile({ displayName: user?.displayName, photoURL: imageURL })
-        await axiosSecure.patch(`/update-profileImg?userEmail=${user?.email}`, { imageURL: imageURL })
-        toast.success('Image change Successfully!')
-    }
-
-    // show edit field 
-    const handleShowEdit = () => {
-        setEdits(true)
-    }
-
-    // hide edit field 
-    const handleCancelEdit = (e) => {
-        e.preventDefault()
-        setEdits(false)
-    }
-
-    // update infomatrion 
-    const handleUpdateInfo = async (data) => {
-        const name = data.name
-        const bio = data.bio;
-        const address = data.address;
-        await updateUserProfile({ displayName: name, photoURL: user?.photoURL });
-        const result = await axiosSecure.patch(`/updateinfo?email=${user?.email}`, { name: name, bio: bio, address: address });
-        toast.success('Update Successfully');
-        setEdits(false);
-    }
-
-    // participant data 
+    // Get participant count
     const { data: participantCount = [] } = useQuery({
         queryKey: ['participant-count', user?.email],
         queryFn: async () => {
-            const result = await axiosSecure.get(`/total-participant?email=${user?.email}`)
-            return result.data
-        }
-    })
+            const result = await axiosSecure.get(`/total-participant?email=${user?.email}`);
+            return result.data;
+        },
+        enabled: !!user?.email,
+    });
 
-    // participant data 
+    // Get win count
     const { data: winCount = [] } = useQuery({
         queryKey: ['win-count', user?.email],
         queryFn: async () => {
-            const result = await axiosSecure.get(`/total-win?email=${user?.email}`)
-            return result.data
-        }
-    })
+            const result = await axiosSecure.get(`/total-win?email=${user?.email}`);
+            return result.data;
+        },
+        enabled: !!user?.email,
+    });
 
     const won = winCount?.length || 0;
     const participated = participantCount?.length || 0;
-    const lost = participated - won;
+    const lost = Math.max(0, participated - won);
 
-    const data = [
+    const chartData = [
         { name: 'Won', value: won },
         { name: 'Lost', value: lost },
     ];
 
-    if (loading) {
-        return <Loading />
+    // Change photo
+    const handleChangePhoto = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            const imageURL = await uploadImage(file);
+            await updateUserProfile({ displayName: user?.displayName, photoURL: imageURL });
+            await axiosSecure.patch(`/update-profileImg?userEmail=${user?.email}`, { imageURL });
+            toast.success('Profile photo updated successfully');
+        } catch (error) {
+            toast.error('Failed to update photo');
+        }
+    };
+
+    // Toggle edit mode
+    const toggleEdit = () => setIsEditing(!isEditing);
+    const cancelEdit = (e) => {
+        e.preventDefault();
+        setIsEditing(false);
+    };
+
+    // Update info
+    const onSubmit = async (data) => {
+        try {
+            await updateUserProfile({ 
+                displayName: data.name, 
+                photoURL: user?.photoURL 
+            });
+            
+            await axiosSecure.patch(`/updateinfo?email=${user?.email}`, {
+                name: data.name,
+                bio: data.bio,
+                address: data.address,
+            });
+            
+            toast.success('Profile updated successfully');
+            setIsEditing(false);
+        } catch (error) {
+            toast.error('Failed to update profile');
+        }
+    };
+
+    if (loading || profileLoading) {
+        return <Loading />;
     }
 
     return (
-        <div className='flow-root px-4 md:px-8 bg-white dark:bg-gray-900 min-h-screen py-12'>
-            
-            {/* Title Section */}
-            <div className='my-8 space-y-4 text-center mb-12'>
-                <h2 className='text-3xl md:text-5xl text-primary dark:text-white font-bold'>My Profile</h2>
-                <p className='text-base md:text-lg text-gray-700 dark:text-gray-300'>
-                    Manage your profile and track your achievements
-                </p>
-                <div className='flex justify-center'>
-                    <div className='h-1 w-24 bg-gradient-to-r from-secondary via-accent to-secondary rounded-full'></div>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-8 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-6xl">
+                
+                {/* Header */}
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
+                        Profile Settings
+                    </h1>
+                    <p className="mt-2 text-gray-600 dark:text-gray-400">
+                        Manage your personal information and view your contest statistics
+                    </p>
                 </div>
-            </div>
 
-            {/* Profile Card */}
-            <div className='bg-white dark:bg-gray-800 shadow-2xl rounded-3xl border-2 border-secondary/10 dark:border-secondary/20 overflow-hidden max-w-4xl mx-auto mb-16'>
-                <div className='flex flex-col md:flex-row'>
+                <div className="grid gap-8 lg:grid-cols-3">
                     
-                    {/* Left Side - Photo Section */}
-                    <div className='w-full md:w-1/3 bg-gradient-to-br from-secondary to-secondary/80 dark:from-secondary dark:to-secondary/90 flex flex-col justify-center items-center py-12 md:py-0'>
-                        <div className='relative group'>
-                            <img 
-                                src={user?.photoURL} 
-                                alt="Profile" 
-                                className='w-32 h-32 md:w-40 md:h-40 rounded-2xl object-cover border-4 border-white shadow-lg group-hover:scale-105 transition-transform duration-300' 
-                            />
-                            <div className='absolute inset-0 rounded-2xl bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center'>
-                                <FaCamera className='text-white text-3xl' />
+                    {/* Left Column - Avatar & Quick Stats */}
+                    <div className="space-y-6 lg:col-span-1">
+                        {/* Avatar Card */}
+                        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                            <div className="flex flex-col items-center">
+                                <div className="relative mb-4">
+                                    <img
+                                        src={user?.photoURL || 'https://via.placeholder.com/150'}
+                                        alt="Profile"
+                                        className="h-32 w-32 rounded-full object-cover border-4 border-gray-100 dark:border-gray-700"
+                                    />
+                                    <label className="absolute bottom-0 right-0 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-colors">
+                                        <FaCamera size={16} />
+                                        <input
+                                            type="file"
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={handleChangePhoto}
+                                        />
+                                    </label>
+                                </div>
+                                
+                                <h2 className="text-xl font-bold text-gray-900 dark:text-white text-center">
+                                    {user?.displayName}
+                                </h2>
+                                <p className="mt-1 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                                    <FaEnvelope size={14} />
+                                    {user?.email}
+                                </p>
+                            </div>
+
+                            <div className="mt-6 grid grid-cols-2 gap-4 border-t border-gray-200 pt-6 dark:border-gray-700">
+                                <div className="text-center">
+                                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                        {participated}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Contests</p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                                        {won}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Wins</p>
+                                </div>
                             </div>
                         </div>
-                        
-                        <label className="btn bg-white text-secondary hover:bg-gray-100 rounded-full mt-6 font-semibold shadow-lg">
-                            <FaCamera size={18} />
-                            Change Photo
-                            <input
-                                type="file"
-                                className="hidden"
-                                accept="image/*"
-                                onChange={(e) => handleChangePhoto(e.target.files[0])}
-                            />
-                        </label>
-                    </div>
 
-                    {/* Right Side - Info Section */}
-                    <div className='flex-1 p-8 md:p-12 flex flex-col justify-between'>
-                        
-                        {edits === true ? (
-                            <form onSubmit={handleSubmit(handleUpdateInfo)} className='space-y-6'>
-                                {/* Name Field */}
-                                <div>
-                                    <label className="block text-lg font-bold text-primary dark:text-white mb-3">Name</label>
-                                    <input 
-                                        defaultValue={user?.displayName} 
-                                        {...register('name')} 
-                                        type="text" 
-                                        className="w-full px-4 py-3 border-2 border-secondary/30 dark:border-secondary/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:text-white text-primary" 
-                                        placeholder="Enter Your Name" 
-                                    />
-                                </div>
-
-                                {/* Bio Field */}
-                                <div>
-                                    <label className="block text-lg font-bold text-primary dark:text-white mb-3">Bio</label>
-                                    <textarea 
-                                        defaultValue={profileInfo.bio} 
-                                        {...register('bio')} 
-                                        rows="4"
-                                        className="w-full px-4 py-3 border-2 border-secondary/30 dark:border-secondary/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:text-white text-primary" 
-                                        placeholder="Write Your Bio" 
-                                    />
-                                </div>
-
-                                {/* Address Field */}
-                                <div>
-                                    <label className="block text-lg font-bold text-primary dark:text-white mb-3">Address</label>
-                                    <input 
-                                        defaultValue={profileInfo.address} 
-                                        {...register('address')} 
-                                        type="text" 
-                                        className="w-full px-4 py-3 border-2 border-secondary/30 dark:border-secondary/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:text-white text-primary" 
-                                        placeholder="Write Your Address" 
-                                    />
-                                </div>
-
-                                {/* Action Buttons */}
-                                <div className='flex gap-4 pt-6'>
-                                    <button 
-                                        type='submit'
-                                        className='flex-1 btn bg-gradient-to-r from-secondary to-secondary/80 text-white font-bold rounded-lg hover:shadow-lg transition-all'
-                                    >
-                                        Save Changes
-                                    </button>
-                                    <button 
-                                        onClick={handleCancelEdit} 
-                                        className='flex-1 btn bg-gray-300 dark:bg-gray-700 text-primary dark:text-white font-bold rounded-lg hover:shadow-lg transition-all'
-                                    >
-                                        Cancel
-                                    </button>
-                                </div>
-                            </form>
-                        ) : (
-                            <div className='space-y-6'>
-                                {/* User Info */}
-                                <div>
-                                    <h2 className='text-2xl md:text-3xl font-bold text-primary dark:text-white mb-2'>
-                                        {user?.displayName}
-                                    </h2>
-                                    <p className='text-gray-700 dark:text-gray-400 text-lg'>
-                                        {user?.email}
-                                    </p>
-                                </div>
-
-                                {/* Bio Section */}
-                                <div className='border-t-2 border-secondary/20 dark:border-secondary/30 pt-6'>
-                                    <p className='text-lg font-bold text-primary dark:text-white mb-2'>Bio</p>
-                                    <p className='text-gray-700 dark:text-gray-300'>
-                                        {profileInfo.bio || 'Contest enthusiast and creative thinker'}
-                                    </p>
-                                </div>
-
-                                {/* Address Section */}
-                                <div className='border-t-2 border-secondary/20 dark:border-secondary/30 pt-6'>
-                                    <p className='text-lg font-bold text-primary dark:text-white mb-2'>Address</p>
-                                    <p className='text-gray-700 dark:text-gray-300'>
-                                        {profileInfo.address || 'Dhaka, Bangladesh'}
-                                    </p>
-                                </div>
-
-                                {/* Edit Button */}
-                                <button 
-                                    onClick={handleShowEdit} 
-                                    className='mt-6 btn bg-gradient-to-r from-secondary to-secondary/80 text-white font-bold rounded-lg hover:shadow-lg transition-all flex items-center gap-2 w-full md:w-auto'
-                                >
-                                    <FaRegEdit />
-                                    Edit Profile
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {/* Statistics Section */}
-            <div className='mt-16'>
-                <h2 className='text-3xl md:text-4xl font-bold text-center text-primary dark:text-white mb-12'>
-                    Performance Analytics
-                </h2>
-
-                <div className='bg-gradient-to-br from-secondary/5 to-secondary/10 dark:from-secondary/20 dark:to-secondary/10 rounded-3xl p-8 md:p-12 border-2 border-secondary/20 dark:border-secondary/30 max-w-4xl mx-auto'>
-                    
-                    {/* Stats Cards */}
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-12'>
-                        {/* Total Participant */}
-                        <div className='bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border-2 border-secondary/10 dark:border-secondary/20 hover:shadow-xl transition-all duration-300'>
-                            <p className='text-gray-700 dark:text-gray-400 font-semibold text-sm mb-3'>Total Participated</p>
-                            <h3 className='text-5xl md:text-6xl font-bold text-secondary mb-2'>
-                                {participantCount?.length}
+                        {/* Quick Info */}
+                        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                            <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+                                Location
                             </h3>
-                            <p className='text-gray-600 dark:text-gray-400 text-sm'>contests</p>
-                        </div>
-
-                        {/* Total Win */}
-                        <div className='bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border-2 border-accent/10 dark:border-accent/20 hover:shadow-xl transition-all duration-300'>
-                            <p className='text-gray-700 dark:text-gray-400 font-semibold text-sm mb-3'>Total Wins</p>
-                            <h3 className='text-5xl md:text-6xl font-bold text-accent mb-2'>
-                                {winCount?.length}
-                            </h3>
-                            <p className='text-gray-600 dark:text-gray-400 text-sm'>victories</p>
+                            <div className="flex items-start gap-3 text-gray-600 dark:text-gray-300">
+                                <FaMapMarkerAlt className="mt-1 flex-shrink-0 text-gray-400" />
+                                <span>{profileInfo?.address || 'No address provided'}</span>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Chart Section */}
-                    <div className='bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border-2 border-secondary/10 dark:border-secondary/20'>
-                        <h3 className='text-xl font-bold text-primary dark:text-white text-center mb-8'>Win/Loss Distribution</h3>
+                    {/* Right Column - Details & Form */}
+                    <div className="lg:col-span-2 space-y-6">
                         
-                        <div className='w-full max-w-[500px] h-[300px] mx-auto'>
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    <Pie
-                                        data={data}
-                                        dataKey="value"
-                                        startAngle={180}
-                                        endAngle={0}
-                                        cx="50%"
-                                        cy="50%"
-                                        outerRadius="80%"
-                                        label={({ name, value }) => `${name}: ${value}`}
-                                        isAnimationActive={true}
+                        {/* Profile Information */}
+                        <div className="rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                            <div className="border-b border-gray-200 px-6 py-4 dark:border-gray-700 flex items-center justify-between">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                    Personal Information
+                                </h3>
+                                {!isEditing && (
+                                    <button
+                                        onClick={toggleEdit}
+                                        className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                                     >
-                                        {data.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                        ))}
-                                    </Pie>
-                                </PieChart>
-                            </ResponsiveContainer>
+                                        <FaRegEdit size={14} />
+                                        Edit
+                                    </button>
+                                )}
+                            </div>
+
+                            <div className="p-6">
+                                {isEditing ? (
+                                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                                        <div className="grid gap-6 sm:grid-cols-2">
+                                            <div>
+                                                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                    Full Name
+                                                </label>
+                                                <input
+                                                    defaultValue={user?.displayName}
+                                                    {...register('name', { required: 'Name is required' })}
+                                                    type="text"
+                                                    className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+                                                />
+                                                {errors.name && (
+                                                    <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
+                                                )}
+                                            </div>
+
+                                            <div>
+                                                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                    Address
+                                                </label>
+                                                <input
+                                                    defaultValue={profileInfo?.address}
+                                                    {...register('address')}
+                                                    type="text"
+                                                    className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+                                                    placeholder="Enter your address"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                Bio
+                                            </label>
+                                            <textarea
+                                                defaultValue={profileInfo?.bio}
+                                                {...register('bio')}
+                                                rows={4}
+                                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+                                                placeholder="Tell us about yourself"
+                                            />
+                                        </div>
+
+                                        <div className="flex gap-3 pt-2">
+                                            <button
+                                                type="submit"
+                                                disabled={isSubmitting}
+                                                className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-700"
+                                            >
+                                                {isSubmitting ? 'Saving...' : 'Save Changes'}
+                                            </button>
+                                            <button
+                                                onClick={cancelEdit}
+                                                className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+                                ) : (
+                                    <div className="space-y-6">
+                                        <div className="grid gap-6 sm:grid-cols-2">
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Full Name</p>
+                                                <p className="mt-1 text-base text-gray-900 dark:text-white">{user?.displayName}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Address</p>
+                                                <p className="mt-1 text-base text-gray-900 dark:text-white">
+                                                    {profileInfo?.address || 'Not provided'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Bio</p>
+                                            <p className="mt-1 text-base text-gray-900 dark:text-white leading-relaxed">
+                                                {profileInfo?.bio || 'No bio added yet.'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
-                        {/* Legend */}
-                        <div className='flex justify-center gap-8 mt-8'>
-                            <div className='flex items-center gap-2'>
-                                <div className='w-4 h-4 rounded-full' style={{backgroundColor: COLORS[0]}}></div>
-                                <span className='text-gray-700 dark:text-gray-300 font-medium'>Won: {won}</span>
+                        {/* Performance Chart */}
+                        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                            <div className="mb-6 flex items-center gap-2">
+                                <FaChartPie className="text-blue-600 dark:text-blue-400" />
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                    Contest Performance
+                                </h3>
                             </div>
-                            <div className='flex items-center gap-2'>
-                                <div className='w-4 h-4 rounded-full' style={{backgroundColor: COLORS[1]}}></div>
-                                <span className='text-gray-700 dark:text-gray-300 font-medium'>Lost: {lost}</span>
+
+                            <div className="flex flex-col items-center justify-center gap-8 md:flex-row">
+                                <div className="h-64 w-full max-w-xs">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <PieChart>
+                                            <Pie
+                                                data={chartData}
+                                                cx="50%"
+                                                cy="50%"
+                                                innerRadius={60}
+                                                outerRadius={80}
+                                                paddingAngle={5}
+                                                dataKey="value"
+                                            >
+                                                {chartData.map((entry, index) => (
+                                                    <Cell 
+                                                        key={`cell-${index}`} 
+                                                        fill={COLORS[index % COLORS.length]} 
+                                                    />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip 
+                                                contentStyle={{ 
+                                                    backgroundColor: '#fff', 
+                                                    border: '1px solid #e5e7eb',
+                                                    borderRadius: '8px',
+                                                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                                                }}
+                                            />
+                                            <Legend verticalAlign="bottom" height={36}/>
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                </div>
+
+                                <div className="grid w-full gap-4 sm:grid-cols-2 md:w-auto">
+                                    <div className="rounded-xl bg-blue-50 p-4 dark:bg-blue-900/20">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white">
+                                                <FaTrophy size={18} />
+                                            </div>
+                                            <div>
+                                                <p className="text-2xl font-bold text-gray-900 dark:text-white">{won}</p>
+                                                <p className="text-sm text-gray-600 dark:text-gray-400">Wins</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="rounded-xl bg-red-50 p-4 dark:bg-red-900/20">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-white">
+                                                <FaChartPie size={18} />
+                                            </div>
+                                            <div>
+                                                <p className="text-2xl font-bold text-gray-900 dark:text-white">{lost}</p>
+                                                <p className="text-sm text-gray-600 dark:text-gray-400">Losses</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
