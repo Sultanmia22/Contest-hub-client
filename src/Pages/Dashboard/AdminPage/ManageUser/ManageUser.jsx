@@ -1,177 +1,167 @@
 import React from 'react';
-import { Link } from 'react-router';
-import useAxiosSecure from '../../../../Hook/useAxiosSecure';
 import { useQuery } from '@tanstack/react-query';
-import Loading from '../../../../Components/LoadingPage/Loading';
 import { FaUsersGear, FaUser, FaPencil, FaCrown } from 'react-icons/fa6';
+import useAxiosSecure from '../../../../Hook/useAxiosSecure';
+import Loading from '../../../../Components/LoadingPage/Loading';
+import { toast } from 'react-toastify';
 
 const ManageUser = () => {
-
     const axiosSecure = useAxiosSecure();
 
     const { data: users = [], isLoading, refetch } = useQuery({
         queryKey: ['users'],
         queryFn: async () => {
             const result = await axiosSecure.get('/manage-user');
-            return result.data
+            return result.data;
         }
-    })
+    });
 
-    // MANAGE USER FUNTION 
+    // MANAGE USER FUNCTION 
     const manageUser = async (id, role) => {
         try {
-            const result = await axiosSecure.patch(`/change-role/${id}`, role);
-            refetch()
-        }
-        catch (er) {
-            // console.log(er)
-        }
-    }
-
-    // Get role color styling
-    const getRoleBadge = (role) => {
-        switch (role) {
-            case 'user':
-                return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-600';
-            case 'creator':
-                return 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-600';
-            case 'admin':
-                return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-600';
-            default:
-                return 'bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600';
+            await axiosSecure.patch(`/change-role/${id}`, role);
+            refetch();
+            toast.success('Role updated successfully');
+        } catch (error) {
+            toast.error('Failed to update role');
         }
     };
 
+    // FIXED: Render role badge as JSX element instead of returning plain string
+    const getRoleBadge = (role) => {
+        const baseClasses = 'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium capitalize';
+        let colorClasses = '';
+
+        switch (role?.toLowerCase()) {
+            case 'user':
+                colorClasses = 'bg-blue-50 text-blue-700 ring-1 ring-blue-600/20 dark:bg-blue-900/20 dark:text-blue-300 dark:ring-blue-500/30';
+                break;
+            case 'creator':
+                colorClasses = 'bg-purple-50 text-purple-700 ring-1 ring-purple-600/20 dark:bg-purple-900/20 dark:text-purple-300 dark:ring-purple-500/30';
+                break;
+            case 'admin':
+                colorClasses = 'bg-red-50 text-red-700 ring-1 ring-red-600/20 dark:bg-red-900/20 dark:text-red-300 dark:ring-red-500/30';
+                break;
+            default:
+                colorClasses = 'bg-gray-50 text-gray-700 ring-1 ring-gray-600/20 dark:bg-gray-800 dark:text-gray-300 dark:ring-gray-500/30';
+        }
+
+        return (
+            <span className={`${baseClasses} ${colorClasses}`}>
+                {role || 'user'}
+            </span>
+        );
+    };
+
     if (isLoading) {
-        return <Loading />
+        return <Loading />;
     }
 
     return (
-        <div className='flow-root bg-white dark:bg-gray-900 min-h-screen py-12 px-4 md:px-8'>
-            
-            {/* Header Section */}
-            <div className='max-w-7xl mx-auto mb-12'>
-                <div className='space-y-4'>
-                    <h2 className='text-3xl md:text-5xl font-bold text-primary dark:text-white flex items-center gap-3'>
-                        <FaUsersGear className='text-secondary' size={40} />
-                        Manage Users
-                    </h2>
-                    <p className='text-base md:text-lg text-gray-700 dark:text-gray-300'>
-                        Control user roles and permissions across the platform
-                    </p>
-                    <div className='flex justify-start'>
-                        <div className='h-1 w-24 bg-gradient-to-r from-secondary via-accent to-secondary rounded-full'></div>
+        <div className="min-h-screen bg-gray-50 px-4 py-8 dark:bg-gray-950">
+            <div className="mx-auto max-w-7xl">
+                
+                {/* Header Section */}
+                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
+                            Manage Users
+                        </h1>
+                        <p className="mt-2 text-gray-600 dark:text-gray-400">
+                            Control user roles and permissions across the platform
+                        </p>
+                    </div>
+                    
+                    <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 ring-1 ring-blue-600/20 dark:bg-blue-900/30 dark:text-blue-300 dark:ring-blue-500/30">
+                        <FaUsersGear size={18} />
+                        Total Users: {users.length}
                     </div>
                 </div>
-            </div>
 
-            {/* Table Section */}
-            <div className='max-w-7xl mx-auto'>
-                <div className="overflow-x-auto rounded-2xl shadow-xl border-2 border-secondary/20 dark:border-secondary/30">
-                    <table className="table w-full bg-white dark:bg-gray-800">
-                        
-                        {/* Head */}
-                        <thead className='bg-gradient-to-r from-secondary to-secondary/80 dark:from-secondary dark:to-secondary/90 text-white font-bold text-sm md:text-base'>
-                            <tr>
-                                <th className='py-4 text-center'>No.</th>
-                                <th className='py-4 text-center'>Avatar</th>
-                                <th className='py-4'>Name</th>
-                                <th className='py-4'>Email</th>
-                                <th className='py-4 text-center'>Current Role</th>
-                                <th className='py-4 text-center'>Actions</th>
-                            </tr>
-                        </thead>
+                {/* Table Section */}
+                <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900/50">
+                                <tr>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white w-16">#</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white w-20">User</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Name</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Email</th>
+                                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-white">Role</th>
+                                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-white">Actions</th>
+                                </tr>
+                            </thead>
 
-                        {/* Body */}
-                        <tbody>
-                            {
-                                users.map((user, index) =>
+                            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                                {users.map((user, index) => (
                                     <tr 
-                                        key={index}
-                                        className='border-b border-secondary/10 dark:border-secondary/20 hover:bg-secondary/5 dark:hover:bg-secondary/10 transition-colors duration-300'
+                                        key={user._id || index}
+                                        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                                     >
-                                        {/* Number */}
-                                        <th className='py-5 text-center'>
-                                            <span className='inline-block w-8 h-8 rounded-full bg-secondary/20 dark:bg-secondary/30 text-primary dark:text-white font-bold flex items-center justify-center text-sm'>
+                                        <td className="px-6 py-4">
+                                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                                                 {index + 1}
                                             </span>
-                                        </th>
+                                        </td>
 
-                                        {/* Avatar */}
-                                        <td className='py-5 text-center'>
-                                            <div className='flex justify-center'>
-                                                <img 
-                                                    src={user?.image} 
-                                                    alt={user?.name}
-                                                    className='w-12 h-12 rounded-full object-cover border-2 border-secondary/30 shadow-md'
-                                                />
+                                        <td className="px-6 py-4">
+                                            <img 
+                                                src={user?.image || 'https://via.placeholder.com/40'} 
+                                                alt={user?.name}
+                                                className="h-10 w-10 rounded-full object-cover ring-2 ring-gray-100 dark:ring-gray-700"
+                                            />
+                                        </td>
+
+                                        <td className="px-6 py-4">
+                                            <div className="font-medium text-gray-900 dark:text-white">
+                                                {user?.name}
                                             </div>
                                         </td>
 
-                                        {/* Name */}
-                                        <td className='py-5'>
-                                            <p className='font-semibold text-primary dark:text-white text-sm md:text-base'>
-                                                {user?.name}
-                                            </p>
-                                        </td>
-
-                                        {/* Email */}
-                                        <td className='py-5'>
-                                            <p className='text-gray-700 dark:text-gray-300 text-sm md:text-base truncate'>
+                                        <td className="px-6 py-4">
+                                            <div className="text-sm text-gray-600 dark:text-gray-300 truncate max-w-xs">
                                                 {user?.email}
-                                            </p>
+                                            </div>
                                         </td>
 
-                                        {/* Current Role */}
-                                        <td className='py-5 text-center'>
-                                            <span className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${getRoleBadge(user?.role)}`}>
-                                                {user?.role === 'user' && '👤 User'}
-                                                {user?.role === 'creator' && '✏️ Creator'}
-                                                {user?.role === 'admin' && '👑 Admin'}
-                                                {!['user', 'creator', 'admin'].includes(user?.role) && user?.role}
-                                            </span>
+                                        <td className="px-6 py-4 text-center">
+                                            {getRoleBadge(user?.role)}
                                         </td>
 
-                                        {/* Actions */}
-                                        <td className='py-5'>
-                                            <div className='flex justify-center gap-2 flex-wrap'>
-                                                {/* User Button */}
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center justify-center gap-2">
                                                 <button 
                                                     onClick={() => manageUser(user?._id, { role: 'user' })}
-                                                    className={`p-2 rounded-lg transition-all duration-300 flex items-center justify-center tooltip ${
+                                                    className={`inline-flex items-center justify-center rounded-lg p-2 transition-colors ${
                                                         user?.role === 'user'
-                                                            ? 'bg-blue-500 text-white shadow-lg'
-                                                            : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 hover:bg-blue-200 hover:shadow-lg'
+                                                            ? 'bg-blue-600 text-white dark:bg-blue-600'
+                                                            : 'text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20'
                                                     }`}
-                                                    data-tip="Set as User"
                                                     title="Set as User"
                                                 >
                                                     <FaUser size={16} />
                                                 </button>
 
-                                                {/* Creator Button */}
                                                 <button 
                                                     onClick={() => manageUser(user?._id, { role: 'creator' })}
-                                                    className={`p-2 rounded-lg transition-all duration-300 flex items-center justify-center tooltip ${
+                                                    className={`inline-flex items-center justify-center rounded-lg p-2 transition-colors ${
                                                         user?.role === 'creator'
-                                                            ? 'bg-purple-500 text-white shadow-lg'
-                                                            : 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300 hover:bg-purple-200 hover:shadow-lg'
+                                                            ? 'bg-purple-600 text-white dark:bg-purple-600'
+                                                            : 'text-purple-600 hover:bg-purple-50 dark:text-purple-400 dark:hover:bg-purple-900/20'
                                                     }`}
-                                                    data-tip="Set as Creator"
                                                     title="Set as Creator"
                                                 >
                                                     <FaPencil size={16} />
                                                 </button>
 
-                                                {/* Admin Button */}
                                                 <button 
                                                     onClick={() => manageUser(user?._id, { role: 'admin' })}
-                                                    className={`p-2 rounded-lg transition-all duration-300 flex items-center justify-center tooltip ${
+                                                    className={`inline-flex items-center justify-center rounded-lg p-2 transition-colors ${
                                                         user?.role === 'admin'
-                                                            ? 'bg-red-500 text-white shadow-lg'
-                                                            : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300 hover:bg-red-200 hover:shadow-lg'
+                                                            ? 'bg-red-600 text-white dark:bg-red-600'
+                                                            : 'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20'
                                                     }`}
-                                                    data-tip="Set as Admin"
                                                     title="Set as Admin"
                                                 >
                                                     <FaCrown size={16} />
@@ -179,21 +169,26 @@ const ManageUser = () => {
                                             </div>
                                         </td>
                                     </tr>
-                                )
-                            }
-                        </tbody>
-                    </table>
-                </div>
-
-                {/* Empty State */}
-                {users.length === 0 && (
-                    <div className='text-center py-16'>
-                        <FaUsersGear className='text-6xl text-secondary/30 mx-auto mb-4' />
-                        <p className='text-gray-600 dark:text-gray-400 text-lg font-medium'>
-                            No users found.
-                        </p>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
-                )}
+
+                    {/* Empty State */}
+                    {users.length === 0 && (
+                        <div className="flex flex-col items-center justify-center py-16 text-center">
+                            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+                                <FaUsersGear className="text-2xl text-gray-400" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                No users found
+                            </h3>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                There are no registered users in the system yet.
+                            </p>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
