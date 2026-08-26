@@ -31,55 +31,55 @@ const WinnerCard = () => {
     ];
 
     return (
-        <>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-10 mb-0'>
             {winnersData.map((winner) => (
-                <div key={winner.id} className='group bg-white dark:bg-gray-800 border-2 border-secondary/30 dark:border-secondary/40 hover:border-secondary hover:shadow-2xl transition-all duration-300 flex flex-col justify-center items-center py-8 px-6 rounded-2xl hover:-translate-y-3 relative'>
+                <article
+                    key={winner.id}
+                    className='card-base relative flex flex-col items-center px-6 py-8'
+                >
 
                     {/* Star Badge */}
-                    <div className='absolute top-4 right-4 bg-accent/20 dark:bg-accent/30 p-3 rounded-full group-hover:bg-accent/30 dark:group-hover:bg-accent/40 transition-colors shadow-md'>
-                        <FaStar className='text-accent text-lg' />
+                    <div className='absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full border border-[var(--ch-border)] bg-[var(--ch-bg)]'>
+                        <FaStar className='text-[var(--ch-accent)] text-xs' />
                     </div>
 
                     {/* Profile Image */}
-                    <div className='w-24 h-24 border-4 border-secondary rounded-full overflow-hidden mb-4 shadow-lg group-hover:shadow-xl transition-shadow'>
-                        <img 
-                            src={winner.image} 
-                            alt={winner.name} 
-                            className='w-full h-full object-cover group-hover:scale-110 transition-transform duration-300'
+                    <div className='w-20 h-20 rounded-full overflow-hidden mb-5 ring-1 ring-[var(--ch-border)]'>
+                        <img
+                            src={winner.image}
+                            alt={winner.name}
+                            className='w-full h-full object-cover'
                         />
                     </div>
 
                     {/* Content Section */}
                     <div className='text-center w-full'>
                         {/* Name */}
-                        <h2 className='text-xl md:text-2xl text-primary dark:text-primary font-bold mb-2'>
+                        <h2 className='text-base md:text-lg text-[var(--ch-text)] font-semibold tracking-tight mb-1'>
                             {winner.name}
                         </h2>
 
                         {/* Contest Type */}
-                        <p className='text-secondary dark:text-secondary font-semibold text-sm md:text-base mb-4'>
+                        <p className='text-[var(--ch-accent)] font-medium text-sm mb-5'>
                             {winner.contest}
                         </p>
 
                         {/* Prize Money */}
-                        <div className='bg-gradient-to-r from-secondary/10 to-accent/10 dark:from-secondary/20 dark:to-accent/20 rounded-lg py-4 mb-4 border border-secondary/20 dark:border-secondary/30'>
-                            <span className='text-2xl md:text-3xl font-bold text-secondary dark:text-secondary'>
+                        <div className='rounded-lg py-3.5 mb-5 border border-[var(--ch-border)] bg-[var(--ch-bg)]'>
+                            <span className='text-xl md:text-2xl font-semibold tracking-tight text-[var(--ch-text)]'>
                                 {winner.prize}
                             </span>
-                            <p className='text-xs text-primary/70 dark:text-primary/60 font-medium mt-1'>Prize Amount</p>
+                            <p className='text-[11px] text-[var(--ch-text-muted)] font-medium mt-1 uppercase tracking-wider'>Prize Amount</p>
                         </div>
 
                         {/* Motivational Quote */}
-                        <p className='text-primary dark:text-primary/80 italic text-sm leading-relaxed px-2 font-medium'>
+                        <p className='text-[var(--ch-text-secondary)] italic text-sm leading-relaxed px-1'>
                             "{winner.quote}"
                         </p>
                     </div>
-
-                    {/* Bottom Accent Line */}
-                    <div className='w-12 h-1 bg-gradient-to-r from-transparent via-secondary to-transparent rounded-full mt-5 group-hover:w-16 transition-all duration-300'></div>
-                </div>
+                </article>
             ))}
-        </>
+        </div>
     );
 };
 
