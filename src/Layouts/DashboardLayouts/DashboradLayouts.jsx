@@ -7,12 +7,15 @@ import { GrTask } from 'react-icons/gr';
 import { RiPresentationFill } from 'react-icons/ri';
 import { GiTightrope } from 'react-icons/gi';
 import { FaUsersGear } from 'react-icons/fa6';
-import { FiSettings, FiMoon, FiSun } from 'react-icons/fi';
+import { FiSettings, FiMoon, FiSun, FiLogOut } from 'react-icons/fi';
+import useAuth from '../../Hook/useAuth';
 
 const DashboardLayouts = () => {
   const { role, roleLoading } = UseRole();
+  const { userSignOut } = useAuth();
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
+  // Sync theme state with document root and local storage
   useEffect(() => {
     const html = document.documentElement;
     html.setAttribute("data-theme", theme);
@@ -20,11 +23,12 @@ const DashboardLayouts = () => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  // Toggle between light and dark themes
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  // Navigation configuration
+  // Role-based navigation mapping configuration
   const navigationItems = {
     user: [
       { to: 'my_participated_contests', icon: RiPresentationFill, label: 'My Participated Contests' },
@@ -42,17 +46,25 @@ const DashboardLayouts = () => {
     ],
   };
 
+  // Retrieve navigation items based on current authenticated user role
   const getNavItems = () => {
     if (roleLoading) return [];
     return navigationItems[role] || [];
   };
+
+  // Handle user logout action
+  const handleLogout = async () => {
+    await userSignOut();
+    setMobileOpen(false);
+  };
+
 
   return (
     <div className="drawer lg:drawer-open">
       <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
       
       <div className="drawer-content flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-        {/* Header */}
+        {/* Top Header Bar */}
         <header className="sticky top-0 z-40 w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
           <div className="flex items-center justify-between px-4 h-16">
             <div className="flex items-center gap-4">
@@ -64,20 +76,10 @@ const DashboardLayouts = () => {
               </label>
               <h1 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors">Dashboard</h1>
             </div>
-
-            <div className="flex items-center gap-3">
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                aria-label="Toggle theme"
-              >
-                {theme === 'light' ? <FiMoon size={18} /> : <FiSun size={18} />}
-              </button>
-            </div>
           </div>
         </header>
 
-        {/* Main Content Area */}
+        {/* Main Content Dynamic Outlet Container */}
         <main className="flex-1 p-6 overflow-x-hidden">
           <div className="max-w-7xl mx-auto">
             <Outlet />
@@ -85,12 +87,12 @@ const DashboardLayouts = () => {
         </main>
       </div>
 
-      {/* Sidebar */}
+      {/* Dashboard Sidebar Drawer */}
       <div className="drawer-side z-50">
         <label htmlFor="dashboard-drawer" className="drawer-overlay lg:hidden bg-gray-900/50 dark:bg-black/70"></label>
         
         <aside className="w-64 min-h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-colors duration-300">
-          {/* Logo Section */}
+          {/* Brand Logo Header */}
           <div className="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700 transition-colors">
             <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-blue-600 dark:bg-blue-500 rounded-lg flex items-center justify-center shadow-sm">
@@ -102,7 +104,7 @@ const DashboardLayouts = () => {
             </Link>
           </div>
 
-          {/* Navigation */}
+          {/* Sidebar Navigation Section */}
           <nav className="flex-1 overflow-y-auto py-4 px-3">
             {roleLoading ? (
               <div className="flex items-center justify-center py-8">
@@ -110,7 +112,7 @@ const DashboardLayouts = () => {
               </div>
             ) : (
               <div className="space-y-6">
-                {/* Main Menu */}
+                {/* Dynamic Role Navigation Menu */}
                 <div>
                   <h3 className="px-3 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
                     Menu
@@ -140,7 +142,7 @@ const DashboardLayouts = () => {
                   </ul>
                 </div>
 
-                {/* Settings Section */}
+                {/* Preferences / Settings Section */}
                 {getNavItems().length > 0 && (
                   <div>
                     <h3 className="px-3 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
@@ -156,8 +158,26 @@ const DashboardLayouts = () => {
             )}
           </nav>
 
-          {/* Footer */}
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 transition-colors">
+          {/* Sidebar Footer (Logout & Theme Toggle Integration) */}
+          <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 transition-colors flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-2">
+              <button 
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-3 py-2 flex-1 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors border border-transparent hover:border-red-100 dark:hover:border-red-900/30"
+              >
+                <FiLogOut className="text-lg" />
+                <span>Logout</span>
+              </button>
+              
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                aria-label="Toggle theme"
+              >
+                {theme === 'light' ? <FiMoon size={18} /> : <FiSun size={18} />}
+              </button>
+            </div>
+            
             <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
               © 2024 ContestHub
             </div>
